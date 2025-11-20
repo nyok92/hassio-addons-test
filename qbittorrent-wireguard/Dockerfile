@@ -8,7 +8,12 @@ ARG BUILD_DATE
 ARG VERSION
 ARG WIREGUARD_RELEASE
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="thespad"
+LABEL maintainer="nyok92"
+
+
+RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
+    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
+    fi
 
 ## Install Wireguard & dependencies
 RUN \
