@@ -130,7 +130,7 @@ RUN \
 COPY root/ /
 
 # add unrar
-COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
+#COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
 VOLUME /config
 
