@@ -19,7 +19,7 @@ wireguard_ipv6_supported() {
         return 1
     fi
 
-    if [[ ! -s /proc/net/if_inet6 ]]; then
+    if [[ -s /proc/net/if_inet6 ]]; then
         return 1
     fi
 
