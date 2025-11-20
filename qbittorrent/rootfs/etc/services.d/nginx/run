@@ -6,7 +6,7 @@ set -euo pipefail
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
 # File where the real (non-VPN) public IP is stored
-REAL_IP_FILE="/currentip"
+REAL_IP_FILE="/currentipv4"
 
 # How often to re-check VPN IP (seconds)
 VPN_CHECK_INTERVAL="${VPN_CHECK_INTERVAL:-300}"
@@ -138,7 +138,7 @@ if [[ "${vpn_enabled}" != true ]]; then
     exec nginx
 fi
 
-# Read the baseline "real" IP from /currentip
+# Read the baseline "real" IP from /currentipv4
 REAL_IP="$(read_real_ip)"
 
 if [[ -n "${REAL_IP}" ]]; then
