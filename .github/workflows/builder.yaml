@@ -19,7 +19,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    name: Initialize builds
     outputs:
       changed_addons: ${{ steps.changed_addons.outputs.addons }}
       changed: ${{ steps.changed_addons.outputs.changed }}
