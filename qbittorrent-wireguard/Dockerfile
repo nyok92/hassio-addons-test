@@ -2,11 +2,11 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 ARG BUILD_ARCH
-
-# set version label
+ARG DL_ARCH
 ARG BUILD_DATE
 ARG VERSION
 ARG WIREGUARD_RELEASE
+
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nyok92"
 
