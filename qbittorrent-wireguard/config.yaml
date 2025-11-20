@@ -6,10 +6,7 @@ url: "https://github.com/nyok92/hassio-addons-test/tree/main/qbittorrent-wiregua
 image: "ghcr.io/nyok92/{arch}-qbittorrent-wireguard"
 udev: true
 arch:
-  - armhf
-  - armv7
   - amd64
-  - i386
   - aarch64
 devices:
   - /dev/net/tun
