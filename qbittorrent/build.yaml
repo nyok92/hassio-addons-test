@@ -1,0 +1,4 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
+build_from:
+  aarch64: "lscr.io/linuxserver/qbittorrent:arm64v8-latest"
+  amd64: "lscr.io/linuxserver/qbittorrent:amd64-latest"
