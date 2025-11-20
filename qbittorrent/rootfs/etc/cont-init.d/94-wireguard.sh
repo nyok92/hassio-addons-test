@@ -163,7 +163,7 @@ fi
 
 # Get current ipv4
 # Should get current ipv6 too to check ipv6 leak
-curl -4 icanhazip.com > /currentipv4
-curl -6 icanhazip.com > /currentipv6
+curl -4 -s ipecho.net/plain > /currentipv4
+curl -6 -s ipecho.net/plain > /currentipv6
 
 bashio::log.info "WireGuard prepared with interface ${interface_name} using configuration ${wireguard_config##*/}."
