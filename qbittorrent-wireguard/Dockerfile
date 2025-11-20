@@ -58,7 +58,7 @@ RUN \
     python3 \
     qt6-qtbase-sqlite && \
   if [ -z ${QBITTORRENT_VERSION+x} ]; then \
-    QBITTORRENT_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/edge/community/x86_64/APKINDEX.tar.gz" | tar -xz -C /tmp \
+    QBITTORRENT_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz" | tar -xz -C /tmp \
     && awk '/^P:qbittorrent-nox$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://'); \
   fi && \
   apk add -U --upgrade --no-cache \
