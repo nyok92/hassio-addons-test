@@ -142,7 +142,7 @@ fi
 REAL_IP="$(read_real_ip)"
 
 if [[ -n "${REAL_IP}" ]]; then
-    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILE}: ${REAL_IP}"
+    bashio::log.info "Real (non-VPN) IPv4 from ${REAL_IP_FILE}: ${REAL_IP}"
 else
     bashio::log.warning "Real IP file ${REAL_IP_FILE} missing or empty; IP leak detection will be less strict."
 fi
