@@ -2,3 +2,8 @@
 build_from:
   aarch64: "lscr.io/linuxserver/qbittorrent:arm64v8-latest"
   amd64: "lscr.io/linuxserver/qbittorrent:amd64-latest"
+labels:
+  org.opencontainers.image.title: "qbittorrent addon"
+  org.opencontainers.image.description: "qbittorrent add-on with optional vpn"
+  org.opencontainers.image.source: "https://github.com/nyok92/hassio-addons-test/qbittorrent"
+  org.opencontainers.image.licenses: "Apache License 2.0"
