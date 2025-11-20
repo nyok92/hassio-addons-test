@@ -143,5 +143,5 @@ schema:
   whitelist: str?
 slug: qbittorrent1
 udev: true
-url: https://github.com/alexbelgium/hassio-addons
+url: https://github.com/nyok92/hassio-addons-test
 version: 5.1.2-14
