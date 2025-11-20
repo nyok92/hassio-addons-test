@@ -1,6 +1,7 @@
-# syntax=docker/dockerfile:1
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-FROM ghcr.io/linuxserver/baseimage-alpine:arm64v8-3.22
+ARG BUILD_ARCH
 
 # set version label
 ARG BUILD_DATE
