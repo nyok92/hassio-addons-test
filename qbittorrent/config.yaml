@@ -3,6 +3,7 @@ version: "5.1.2-14"
 slug: qbittorrent
 description: Bittorrent client with optional vpn
 url: "https://github.com/nyok92/hassio-addons-test/tree/main/qbittorrent"
+image: "ghcr.io/nyok92/{arch}-qbittorrent"
 udev: true
 arch:
   - aarch64
