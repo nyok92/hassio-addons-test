@@ -43,7 +43,7 @@ wireguard_prepare_firewall_wrappers() {
 
     if ! wireguard_firewall_command_works 'iptables-restore'; then
         wrappers_created=true
-        bashio::log.warning 'iptables-restore is unavailable or failed to initialize. WireGuard will skip iptables firewall programming.'
+        bashio::log.warning 'iptables-restore is unavailable or failed to initialize. WireGuard will skip IPv4 firewall programming.'
         wireguard_create_firewall_wrapper 'iptables-restore' "${fallback_dir}"
     fi
 
