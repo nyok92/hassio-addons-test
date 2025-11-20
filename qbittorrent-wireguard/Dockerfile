@@ -12,7 +12,7 @@ LABEL maintainer="nyok92"
 
 
 RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
-    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
+    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=x64; \
     fi
 
 ## Install Wireguard & dependencies
@@ -70,7 +70,7 @@ RUN \
   fi && \
   curl -o \
     /tmp/qbt.tar.gz -L \
-    "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-x64-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
+    "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${BUILD_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
   tar xf \
     /tmp/qbt.tar.gz -C \
     /qbt && \
