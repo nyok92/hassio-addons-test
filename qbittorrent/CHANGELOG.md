@@ -1,3 +1,6 @@
+## 5.1.2-14 (20-11-2025)
+- Fix for IPv6 detection on the host
+
 ## 5.1.2-13 (19-11-2025)
 - Detect when the host disables IPv6, automatically strip IPv6-only WireGuard assignments and record the state for qBittorrent bindings.
 - Add iptables/ip6tables fallback wrappers so WireGuard can still start (with warnings) on systems without the required kernel firewall modules.
