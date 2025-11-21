@@ -6,8 +6,10 @@ ARG PACKAGEPLATFORM
 ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
-
-LABEL maintainer="nyok92"
+ARG MODS_VERSION="v3"
+ARG PKG_INST_VERSION="v1"
+ARG LSIOWN_VERSION="v1"
+ARG WITHCONTENV_VERSION="v1"
 
 # build environment settings
 ENV HOME="/config" \
@@ -19,6 +21,22 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     fi && \
     echo "build arch is ${BUILD_ARCH}"
 
+# Runtime stage
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/docker-mods.${MODS_VERSION}" "/docker-mods"
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/package-install.${PKG_INST_VERSION}" "/etc/s6-overlay/s6-rc.d/init-mods-package-install/run"
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/with-contenv.${WITHCONTENV_VERSION}" "/usr/bin/with-contenv"
+
+# environment variables
+ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
+  HOME="/root" \
+  TERM="xterm" \
+  S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
+  S6_VERBOSITY=1 \
+  S6_STAGE2_HOOK=/docker-mods \
+  VIRTUAL_ENV=/lsiopy \
+  PATH="/lsiopy/bin:$PATH"
+  
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
