@@ -3,13 +3,10 @@ FROM $BUILD_FROM
 
 ARG BUILD_ARCH
 ARG PACKAGEPLATFORM
-ARG BUILD_DATE
-ARG VERSION
 ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
 
-LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nyok92"
 
 # build environment settings
@@ -48,7 +45,6 @@ RUN \
   sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1|[[ $proto == -4 ]] \&\& [[ $(sysctl -n net.ipv4.conf.all.src_valid_mark) != 1 ]] \&\& cmd sysctl -q net.ipv4.conf.all.src_valid_mark=1|' /usr/bin/wg-quick && \
   rm -rf /etc/wireguard && \
   ln -s /config/wg_confs /etc/wireguard && \
-  printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** clean up ****" && \
   rm -rf \
     /tmp/*
@@ -85,8 +81,7 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then PACKAGEPLATFORM=arm64; \
   tar -xzf \
   /tmp/qbt.tar.gz -C \
   /qbt
-RUN printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
-  echo "**** cleanup ****" && \
+RUN echo "**** cleanup ****" && \
   rm -rf \
   /root/.cache \
   /tmp/*
