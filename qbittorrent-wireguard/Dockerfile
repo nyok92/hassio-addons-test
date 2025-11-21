@@ -89,26 +89,15 @@ RUN echo "**** cleanup ****" && \
 # add local files
 COPY root/ /
 
-# Image specific modifications
-# hadolint ignore=DL4006
-RUN \
-    # Set download folder to /share
-    sed -i 's|/downloads/|/share/qBittorrent/|g' /defaults/qBittorrent.conf \
-    \
-    # Remove fixed folders, allows connection to webUI
-    && sed '11,13d' /defaults/qBittorrent.conf \
-    && echo 'WebUI\HostHeaderValidation=false' >> /defaults/qBittorrent.conf \
-    && echo 'WebUI\LocalHostAuth=false' >> /defaults/qBittorrent.conf \
-    \
-    # Add vuetorrent
-    && curl -f -s -S -O -J -L "$(curl -f -s -L https://api.github.com/repos/WDaan/VueTorrent/releases | grep -o "http.*vuetorrent.zip" | head -1)" >/dev/null \
+# Add vuetorrent
+RUN curl -f -s -S -O -J -L "$(curl -f -s -L https://api.github.com/repos/WDaan/VueTorrent/releases | grep -o "http.*vuetorrent.zip" | head -1)" >/dev/null \
     && unzip -o vuetorrent.zip -d / >/dev/null \
     && rm vuetorrent.zip >/dev/null
 
 # Global LSIO modifications
-ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_lsio.sh" "/ha_lsio.sh"
-ARG CONFIGLOCATION="/config"
-RUN chmod 744 /ha_lsio.sh && if grep -qr "lsio" /etc; then /ha_lsio.sh "$CONFIGLOCATION"; fi && rm /ha_lsio.sh
+#ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_lsio.sh" "/ha_lsio.sh"
+#ARG CONFIGLOCATION="/config"
+#RUN chmod 744 /ha_lsio.sh && if grep -qr "lsio" /etc; then /ha_lsio.sh "$CONFIGLOCATION"; fi && rm /ha_lsio.sh
 
 # ADD QBIT_MANAGE
 #################
