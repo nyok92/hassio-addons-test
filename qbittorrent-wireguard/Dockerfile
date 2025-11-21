@@ -91,6 +91,9 @@ RUN printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /bu
   /root/.cache \
   /tmp/*
 
+# add local files
+COPY root/ /
+
 # Image specific modifications
 # hadolint ignore=DL4006
 RUN \
@@ -136,9 +139,6 @@ RUN \
     apk add --no-cache py3-pip gcc musl-dev && \
     cd /qbit_manage && \
     pip3 install --break-system-packages --user .
-
-# add local files
-COPY root/ /
 
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
