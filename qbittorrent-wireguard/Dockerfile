@@ -173,7 +173,9 @@ RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/svc-qbittorrent/run \
     /etc/s6-overlay/s6-rc.d/svc-wireguard/run \
     /etc/s6-overlay/s6-rc.d/svc-coredns/run \
-    /etc/s6-overlay/s6-rc.d/svc-wireguard/finish
+    /etc/s6-overlay/s6-rc.d/svc-wireguard/finish \
+    /etc/services.d/run \
+    /etc/services.d/finish
 
 VOLUME /config
 
