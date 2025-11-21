@@ -11,7 +11,7 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
     echo "build arch is ${BUILD_ARCH}"
-
+############################################ Linux docker qbittorrent repo #################################
 ## Install Wireguard & dependencies
 RUN \
   if [ -z ${WIREGUARD_RELEASE+x} ]; then \
@@ -41,7 +41,7 @@ RUN \
   echo "**** clean up ****" && \
   rm -rf \
     /tmp/*
-
+############################################ Linux docker qbittorrent repo #################################
 # build environment settings
 ENV HOME="/config" \
 XDG_CONFIG_HOME="/config" \
@@ -85,6 +85,82 @@ RUN echo "**** cleanup ****" && \
   /root/.cache \
   /tmp/*
 
+############################################ Linux docker qbittorrent repo #################################
+# Image specific modifications
+# hadolint ignore=DL4006
+RUN \
+    # Set download folder to /share
+    sed -i 's|/downloads/|/share/qBittorrent/|g' /defaults/qBittorrent.conf \
+    \
+    # Remove fixed folders, allows connection to webUI
+    && sed '11,13d' /defaults/qBittorrent.conf \
+    && echo 'WebUI\HostHeaderValidation=false' >> /defaults/qBittorrent.conf \
+    && echo 'WebUI\LocalHostAuth=false' >> /defaults/qBittorrent.conf \
+    \
+    # Add vuetorrent
+    && curl -f -s -S -O -J -L "$(curl -f -s -L https://api.github.com/repos/WDaan/VueTorrent/releases | grep -o "http.*vuetorrent.zip" | head -1)" >/dev/null \
+    && unzip -o vuetorrent.zip -d / >/dev/null \
+    && rm vuetorrent.zip >/dev/null
+
+# Global LSIO modifications
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_lsio.sh" "/ha_lsio.sh"
+ARG CONFIGLOCATION="/config"
+RUN chmod 744 /ha_lsio.sh && if grep -qr "lsio" /etc; then /ha_lsio.sh "$CONFIGLOCATION"; fi && rm /ha_lsio.sh
+
+# ADD QBIT_MANAGE
+#################
+
+ENV QBM_DOCKER=True
+ENV QBT_SKIP_QB_VERSION_CHECK=True
+ENV qbt_skip_qb_version_check=true
+ENV PYTHONUNBUFFERED=1
+
+# halodint disable=DL3019,SC3010
+RUN \
+    apk add --no-cache git && \
+    git clone --branch master https://github.com/StuffAnThings/qbit_manage.git /qbit_manage && \
+    sed -i "/qbittorrent-api/d" /qbit_manage/pyproject.toml && \
+    \
+    # Install dependencies
+    ## Allow python specific arch
+    BUILD_ARCH=$(uname -m) && \
+    echo "${BUILD_ARCH}" && \
+    BUILD_ARCH=${BUILD_ARCH:-x86} && \
+    if test "${BUILD_ARCH}" != "*amd64*"; then apk add --no-cache python3-dev; else apk add --no-cache python3; fi && \
+    ln -sf python3 /usr/bin/python && \
+    apk add --no-cache py3-pip gcc musl-dev && \
+    cd /qbit_manage && \
+    pip3 install --break-system-packages --user .
+
+# Uses /bin for compatibility purposes
+# hadolint ignore=DL4005
+RUN if [ ! -f /bin/sh ] && [ -f /usr/bin/sh ]; then ln -s /usr/bin/sh /bin/sh; fi && \
+    if [ ! -f /bin/bash ] && [ -f /usr/bin/bash ]; then ln -s /usr/bin/bash /bin/bash; fi
+
+# Modules
+ARG MODULES="00-banner.sh 01-custom_script.sh 00-local_mounts.sh 00-smb_mounts.sh 90-dns_set.sh"
+
+# Automatic modules download
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_automodules.sh" "/ha_automodules.sh"
+RUN chmod 744 /ha_automodules.sh && /ha_automodules.sh "$MODULES" && rm /ha_automodules.sh
+
+#RUN if [ -f /etc/s6-overlay/s6-rc.d/init-adduser ]; then for SCRIPTS in /etc/cont-init.d/*; do [ -e "$SCRIPTS" ] || continue \
+#    && mkdir -p /abscripts && sed -i 's|/usr/bin/with-contenv bashio|/usr/bin/env bashio|g' "$SCRIPTS" \
+#    && SCRIPTSNAME="$(basename "$SCRIPTS")" && mkdir /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME" && mv "$SCRIPTS" /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/run \
+#    && echo "oneshot" > /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/type && echo "/etc/s6-overlay/s6-rc.d/$SCRIPTSNAME/run" > /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/up \
+#    && chmod a+x /etc/s6-overlay/s6-rc.d/$SCRIPTSNAME/* ; done; fi
+
+# Manual apps
+#ARG PACKAGES="wireguard-tools iptables ip6tables"
+
+# Automatic apps & bashio
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_autoapps.sh" "/ha_autoapps.sh"
+RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.sh
+
+# Switch scripts from s6 v2 to v3
+#RUN if [ -f /etc/s6-overlay/s6-rc.d/init-custom-file/run ]; then mkdir "/custom-cont-init.d" && for SCRIPTS in /etc/cont-init.d/*; do [ -e "$SCRIPTS" ] || continue \
+#    && mv "$SCRIPTS" /custom-cont-init.d && chmod a+x /custom-cont-init.d/*; done; fi
+    
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
