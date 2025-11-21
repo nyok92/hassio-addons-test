@@ -135,12 +135,6 @@ RUN \
     cd /qbit_manage && \
     pip3 install --break-system-packages --user .
 
-RUN if [ -f /etc/s6-overlay/s6-rc.d/init-adduser ]; then for SCRIPTS in /etc/cont-init.d/*; do [ -e "$SCRIPTS" ] || continue \
-    && mkdir -p /abscripts && sed -i 's|/usr/bin/with-contenv bashio|/usr/bin/env bashio|g' "$SCRIPTS" \
-    && SCRIPTSNAME="$(basename "$SCRIPTS")" && mkdir /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME" && mv "$SCRIPTS" /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/run \
-    && echo "oneshot" > /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/type && echo "/etc/s6-overlay/s6-rc.d/$SCRIPTSNAME/run" > /etc/s6-overlay/s6-rc.d/"$SCRIPTSNAME"/up \
-    && chmod a+x /etc/s6-overlay/s6-rc.d/$SCRIPTSNAME/* ; done; fi
-
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
