@@ -123,6 +123,7 @@ schema:
   DNS_server: str?
   PGID: int?
   PUID: int?
+  LSIO_NON_ROOT_USER: bool?
   SavePath: str?
   TZ: str?
   Username: str?
