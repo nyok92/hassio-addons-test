@@ -10,6 +10,6 @@ labels:
   org.opencontainers.image.source: "https://github.com/nyok92/hassio-addons-test/qbittorrent-wireguard"
   org.opencontainers.image.licenses: "GNU General Public License v3.0"
 args:
-   QBITTORRENT_CLI: v1.8.24285.1
+   QBT_CLI_VERSION: v1.8.24285.1
 #  codenotary: yes
 #  codenotary.base_image: notary@home-assistant.io
