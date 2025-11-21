@@ -162,6 +162,6 @@ else
 fi
 
 # Get current ip
-curl -s ipecho.net/plain > /currentip
+curl -4 -s ipecho.net/plain > /currentip
 
 bashio::log.info "WireGuard prepared with interface ${interface_name} using configuration ${wireguard_config##*/}."
