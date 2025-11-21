@@ -23,7 +23,7 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     echo "build arch is ${BUILD_ARCH}"
 
 # download package plateform
-RUN if [ "${BUILD_ARCH}" == "arm64" ]; then PACKAGEPLATFORM=arm64; \
+RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then PACKAGEPLATFORM=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then PACKAGEPLATFORM=x64; \
     fi && \
     echo "PACKAGEPLATFORM is ${PACKAGEPLATFORM}"
