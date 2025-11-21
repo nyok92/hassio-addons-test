@@ -138,6 +138,9 @@ RUN \
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
+RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-envfile/run
+RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-migrations/run
+
 VOLUME /config
 
 # ports and volumes
