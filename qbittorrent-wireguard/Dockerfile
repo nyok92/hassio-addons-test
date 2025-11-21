@@ -1,13 +1,6 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-ARG MODS_VERSION="v3"
-ARG PKG_INST_VERSION="v1"
-ARG LSIOWN_VERSION="v1"
-ARG WITHCONTENV_VERSION="v1"
-ARG BUILD_DATE
-ARG VERSION
-
 ARG BUILD_ARCH
 ARG PACKAGEPLATFORM
 ARG WIREGUARD_RELEASE
@@ -18,50 +11,6 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
     echo "build arch is ${BUILD_ARCH}"
-
-# Runtime stage
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/docker-mods.${MODS_VERSION}" "/docker-mods"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/package-install.${PKG_INST_VERSION}" "/etc/s6-overlay/s6-rc.d/init-mods-package-install/run"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/with-contenv.${WITHCONTENV_VERSION}" "/usr/bin/with-contenv"
-
-# environment variables
-ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
-  HOME="/root" \
-  TERM="xterm" \
-  S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
-  S6_VERBOSITY=1 \
-  S6_STAGE2_HOOK=/docker-mods \
-  VIRTUAL_ENV=/lsiopy \
-  PATH="/lsiopy/bin:$PATH"
-  
-RUN \
-  echo "**** install runtime packages ****" && \
-  apk add --no-cache \
-    alpine-release \
-    bash \
-    ca-certificates \
-    catatonit \
-    coreutils \
-    curl \
-    findutils \
-    jq \
-    netcat-openbsd \
-    procps-ng \
-    shadow \
-    tzdata && \
-  echo "**** create abc user and make our folders ****" && \
-  groupmod -g 1000 users && \
-  useradd -u 911 -U -d /config -s /bin/false abc && \
-  usermod -G users abc && \
-  mkdir -p \
-    /app \
-    /config \
-    /defaults \
-    /lsiopy && \
-  echo "**** cleanup ****" && \
-  rm -rf \
-    /tmp/*
 
 ## Install Wireguard & dependencies
 RUN \
@@ -135,50 +84,11 @@ RUN echo "**** cleanup ****" && \
   /root/.cache \
   /tmp/*
 
-# add local files
-COPY root/ /
-
-# Add vuetorrent
-RUN curl -f -s -S -O -J -L "$(curl -f -s -L https://api.github.com/repos/WDaan/VueTorrent/releases | grep -o "http.*vuetorrent.zip" | head -1)" >/dev/null \
-    && unzip -o vuetorrent.zip -d / >/dev/null \
-    && rm vuetorrent.zip >/dev/null
-
-# Global LSIO modifications
-#ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_lsio.sh" "/ha_lsio.sh"
-#ARG CONFIGLOCATION="/config"
-#RUN chmod 744 /ha_lsio.sh && if grep -qr "lsio" /etc; then /ha_lsio.sh "$CONFIGLOCATION"; fi && rm /ha_lsio.sh
-
-# ADD QBIT_MANAGE
-#################
-
-ENV QBM_DOCKER=True
-ENV QBT_SKIP_QB_VERSION_CHECK=True
-ENV qbt_skip_qb_version_check=true
-ENV PYTHONUNBUFFERED=1
-
-# halodint disable=DL3019,SC3010
-RUN \
-    apk add --no-cache git && \
-    git clone --branch master https://github.com/StuffAnThings/qbit_manage.git /qbit_manage && \
-    sed -i "/qbittorrent-api/d" /qbit_manage/pyproject.toml && \
-    \
-    # Install dependencies
-    ## Allow python specific arch
-    BUILD_ARCH=$(uname -m) && \
-    echo "${BUILD_ARCH}" && \
-    BUILD_ARCH=${BUILD_ARCH:-x86} && \
-    if test "${BUILD_ARCH}" != "*amd64*"; then apk add --no-cache python3-dev; else apk add --no-cache python3; fi && \
-    ln -sf python3 /usr/bin/python && \
-    apk add --no-cache py3-pip gcc musl-dev && \
-    cd /qbit_manage && \
-    pip3 install --break-system-packages --user .
-
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
-#RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-envfile/run \
-#       /etc/s6-overlay/s6-rc.d/init-migrations/run \
-#       /etc/s6-overlay/s6-rc.d/init-adduser/run
+# add local files
+COPY root/ /
 
 VOLUME /config
 
