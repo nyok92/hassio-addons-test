@@ -11,11 +11,6 @@ ARG PKG_INST_VERSION="v1"
 ARG LSIOWN_VERSION="v1"
 ARG WITHCONTENV_VERSION="v1"
 
-# build environment settings
-ENV HOME="/config" \
-XDG_CONFIG_HOME="/config" \
-XDG_DATA_HOME="/config"
-
 RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
@@ -94,6 +89,11 @@ RUN \
   echo "**** clean up ****" && \
   rm -rf \
     /tmp/*
+
+# build environment settings
+ENV HOME="/config" \
+XDG_CONFIG_HOME="/config" \
+XDG_DATA_HOME="/config"
 
 ## Install Qbittorrent & dependencies
 # install runtime packages and qbitorrent-cli
