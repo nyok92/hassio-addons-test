@@ -62,7 +62,7 @@ RUN \
     && awk '/^P:qbittorrent-nox$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://'); \
   fi && \
   apk add -U --upgrade --no-cache \
-    qbittorrent-nox==${QBITTORRENT_VERSION} && \
+    qbittorrent-nox==${QBITTORRENT_VERSION}
 
 RUN echo "***** install qbitorrent-cli ****" && \
   mkdir /qbt && \
