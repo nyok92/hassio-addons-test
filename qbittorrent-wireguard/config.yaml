@@ -113,6 +113,7 @@ ports_description:
   6882/udp: Alternative peer port, do not change
   8080/tcp: Web UI port (not required for Ingress)
 privileged:
+  - SYS_MODULE
   - SYS_ADMIN
   - DAC_READ_SEARCH
   - NET_ADMIN
