@@ -69,24 +69,24 @@ RUN \
     && awk '/^P:qbittorrent-nox$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://'); \
   fi && \
   apk add -U --upgrade --no-cache \
-    qbittorrent-nox==${QBITTORRENT_VERSION}
-RUN  echo "***** install qbitorrent-cli ****" && \
+    qbittorrent-nox==${QBITTORRENT_VERSION} && \
+  echo "***** install qbitorrent-cli ****" && \
   mkdir /qbt && \
   if [ -z ${QBT_CLI_VERSION+x} ]; then \
     QBT_CLI_VERSION=$(curl -sL "https://api.github.com/repos/fedarovich/qbittorrent-cli/releases/latest" \
     | jq -r '. | .tag_name'); \
   fi
-RUN  curl -o \
-    /tmp/qbt.tar.gz -L \
-    "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
+RUN curl -o \
+  /tmp/qbt.tar.gz -L \
+  "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
   tar -xzf \
-    /tmp/qbt.tar.gz -C \
-    /qbt && \
-  printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
+  /tmp/qbt.tar.gz -C \
+  /qbt
+RUN printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** cleanup ****" && \
   rm -rf \
-    /root/.cache \
-    /tmp/*
+  /root/.cache \
+  /tmp/*
 
 # Image specific modifications
 # hadolint ignore=DL4006
