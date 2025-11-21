@@ -20,14 +20,13 @@ XDG_DATA_HOME="/config"
 RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
-    echo "build arch ${BUILD_ARCH}"
+    echo "build arch is ${BUILD_ARCH}"
 
 # download package plateform
-RUN PACKAGEPLATFORM=$(case ${BUILD_ARCH} in \
-        "amd64")        echo "x64"    ;; \
-        "aarch64")      echo "arm64"  ;; \
-        *)              echo ""       ;; esac) && \
-  echo "platform ${PACKAGEPLATFORM} build arch ${BUILD_ARCH}"
+RUN if [ "${BUILD_ARCH}" == "arm64" ]; then PACKAGEPLATFORM=arm64; \
+    elif [ "${BUILD_ARCH}" == "amd64" ]; then PACKAGEPLATFORM=x64; \
+    fi && \
+    echo "PACKAGEPLATFORM is ${PACKAGEPLATFORM}"
 
 ## Install Wireguard & dependencies
 RUN \
