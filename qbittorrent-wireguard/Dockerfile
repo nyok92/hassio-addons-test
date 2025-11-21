@@ -19,6 +19,34 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     fi && \
     echo "build arch is ${BUILD_ARCH}"
 
+RUN \
+  echo "**** install runtime packages ****" && \
+  apk add --no-cache \
+    alpine-release \
+    bash \
+    ca-certificates \
+    catatonit \
+    coreutils \
+    curl \
+    findutils \
+    jq \
+    netcat-openbsd \
+    procps-ng \
+    shadow \
+    tzdata && \
+  echo "**** create abc user and make our folders ****" && \
+  groupmod -g 1000 users && \
+  useradd -u 911 -U -d /config -s /bin/false abc && \
+  usermod -G users abc && \
+  mkdir -p \
+    /app \
+    /config \
+    /defaults \
+    /lsiopy && \
+  echo "**** cleanup ****" && \
+  rm -rf \
+    /tmp/*
+
 ## Install Wireguard & dependencies
 RUN \
   if [ -z ${WIREGUARD_RELEASE+x} ]; then \
