@@ -2,7 +2,7 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 ARG BUILD_ARCH
-ARG DL_ARCH
+ARG PACKAGEPLATFORM
 ARG BUILD_DATE
 ARG VERSION
 ARG WIREGUARD_RELEASE
@@ -12,16 +12,21 @@ ARG QBT_CLI_VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="nyok92"
 
-# environment settings
+# build environment settings
 ENV HOME="/config" \
 XDG_CONFIG_HOME="/config" \
 XDG_DATA_HOME="/config"
 
-RUN if [ "${BUILD_ARCH}" == "amd64" ]; then DL_ARCH=x64; \
-    elif [ "${BUILD_ARCH}" == "aarch64" ]; then DL_ARCH=arm64; \
-    elif [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
+RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi
+
+# download package plateform
+RUN PACKAGEPLATFORM=$(case ${BUILD_ARCH} in \
+        "amd64")        echo "x64"    ;; \
+        "aarch64")      echo "arm64"  ;; \
+        *)              echo ""       ;; esac) && \
+  echo "platform ${PACKAGEPLATFORM} build arch ${BUILD_ARCH}"
 
 ## Install Wireguard & dependencies
 RUN \
@@ -79,7 +84,7 @@ RUN \
 RUN echo installing with qbittorent version: "${QBT_CLI_VERSION}" on arch: "${DL_ARCH}" && \
   curl -o \
   /tmp/qbt.tar.gz -L \
-  "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
+  "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${PACKAGEPLATFORM}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
   tar -xzf \
   /tmp/qbt.tar.gz -C \
   /qbt
