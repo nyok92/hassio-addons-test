@@ -90,8 +90,12 @@ RUN echo "**** cleanup ****" && \
 
 # add local files
 COPY root/ /
-RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
-    /etc/s6-overlay/s6-rc.d/init-qbittorrent-config/run
+RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
+    /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
+    /etc/s6-overlay/s6-rc.d/init-qbittorrent-config/run \
+    /etc/s6-overlay/s6-rc.d/svc-qbittorrent/run \
+    /etc/s6-overlay/s6-rc.d/svc-wireguard/run \
+    /etc/s6-overlay/s6-rc.d/svc-coredns/run
 
 VOLUME /config
 
