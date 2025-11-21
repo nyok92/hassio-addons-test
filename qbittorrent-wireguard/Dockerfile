@@ -63,16 +63,17 @@ RUN \
   fi && \
   apk add -U --upgrade --no-cache \
     qbittorrent-nox==${QBITTORRENT_VERSION} && \
-  echo "***** install qbitorrent-cli ****" && \
+
+RUN echo "***** install qbitorrent-cli ****" && \
   mkdir /qbt && \
   if [ -z ${QBT_CLI_VERSION+x} ]; then \
     QBT_CLI_VERSION=$(curl -sL "https://api.github.com/repos/fedarovich/qbittorrent-cli/releases/latest" \
     | jq -r '. | .tag_name'); \
-  fi
-RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then PACKAGEPLATFORM=arm64; \
+  fi && \
+  if [ "${BUILD_ARCH}" == "aarch64" ]; then PACKAGEPLATFORM=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then PACKAGEPLATFORM=x64; \
-    fi && \
-  echo installing with qbittorent version: "${QBT_CLI_VERSION}" on arch: "${PACKAGEPLATFORM}" && \
+  fi && \
+  echo installing with qbittorent "${QBT_CLI_VERSION}" on "${PACKAGEPLATFORM}" && \
   curl -o \
   /tmp/qbt.tar.gz -L \
   "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${PACKAGEPLATFORM}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
