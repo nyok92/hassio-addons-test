@@ -4,15 +4,15 @@
 export PUID=$(bashio::config 'PUID')
 export PGID=$(bashio::config 'PGID')
 
-#PUID=${PUID:-911}
-#PGID=${PGID:-911}
+PUID2=${PUID:-911}
+PGID2=${PGID:-911}
 
 if [[ -z ${LSIO_READ_ONLY_FS} ]] && [[ -z ${LSIO_NON_ROOT_USER} ]]; then
     USERHOME=$(grep abc /etc/passwd | cut -d ":" -f6)
     usermod -d "/root" abc
 
-    groupmod -o -g "${PGID}" abc
-    usermod -o -u "${PUID}" abc
+    groupmod -o -g "${PGID2}" abc
+    usermod -o -u "${PUID2}" abc
 
     usermod -d "${USERHOME}" abc
 fi
