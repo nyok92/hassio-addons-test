@@ -17,10 +17,10 @@ ENV HOME="/config" \
 XDG_CONFIG_HOME="/config" \
 XDG_DATA_HOME="/config"
 
-RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
-    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
-    elif [ "${BUILD_ARCH}" == "amd64" ]; then DL_ARCH=x64; \
+RUN if [ "${BUILD_ARCH}" == "amd64" ]; then DL_ARCH=x64; \
     elif [ "${BUILD_ARCH}" == "aarch64" ]; then DL_ARCH=arm64; \
+    elif [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
+    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi
 
 ## Install Wireguard & dependencies
@@ -78,8 +78,7 @@ RUN  echo "***** install qbitorrent-cli ****" && \
   fi
 RUN  curl -o \
     /tmp/qbt.tar.gz -L \
-    "https://github.com/fedarovich/qbittorrent-cli/releases/download/v1.8.24285.1/qbt-linux-alpine-x64-net6-1.8.24285.1.tar.gz" && \
-#    "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
+    "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
   tar -xzf \
     /tmp/qbt.tar.gz -C \
     /qbt && \
