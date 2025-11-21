@@ -1,15 +1,20 @@
+FROM ghcr.io/linuxserver/unrar:latest AS unrar
+
 ARG BUILD_FROM
 FROM $BUILD_FROM
+
+ARG MODS_VERSION="v3"
+ARG PKG_INST_VERSION="v1"
+ARG LSIOWN_VERSION="v1"
+ARG WITHCONTENV_VERSION="v1"
+ARG BUILD_DATE
+ARG VERSION
 
 ARG BUILD_ARCH
 ARG PACKAGEPLATFORM
 ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
-ARG MODS_VERSION="v3"
-ARG PKG_INST_VERSION="v1"
-ARG LSIOWN_VERSION="v1"
-ARG WITHCONTENV_VERSION="v1"
 
 RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
@@ -171,11 +176,11 @@ RUN \
     pip3 install --break-system-packages --user .
 
 # install unrar
-#COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
+COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
-RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-envfile/run \
-       /etc/s6-overlay/s6-rc.d/init-migrations/run \
-       /etc/s6-overlay/s6-rc.d/init-adduser/run
+#RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-envfile/run \
+#       /etc/s6-overlay/s6-rc.d/init-migrations/run \
+#       /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 VOLUME /config
 
