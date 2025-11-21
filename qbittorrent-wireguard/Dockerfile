@@ -76,7 +76,8 @@ RUN \
     QBT_CLI_VERSION=$(curl -sL "https://api.github.com/repos/fedarovich/qbittorrent-cli/releases/latest" \
     | jq -r '. | .tag_name'); \
   fi
-RUN curl -o \
+RUN echo installing with qbittorent version: "${QBT_CLI_VERSION}" on arch: "${DL_ARCH}" && \
+  curl -o \
   /tmp/qbt.tar.gz -L \
   "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${DL_ARCH}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
   tar -xzf \
