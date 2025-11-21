@@ -85,7 +85,10 @@ RUN echo "**** cleanup ****" && \
   /root/.cache \
   /tmp/*
 
-############################################ Linux docker qbittorrent repo #################################
+# add local files
+COPY root/ /
+
+############################################ Alexbelgium qbittorrent repo #################################
 # Image specific modifications
 # hadolint ignore=DL4006
 RUN \
@@ -164,8 +167,6 @@ RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
-# add local files
-COPY root/ /
 RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
     /etc/s6-overlay/s6-rc.d/init-qbittorrent-config/run \
