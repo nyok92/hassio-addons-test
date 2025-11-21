@@ -1,5 +1,3 @@
-FROM ghcr.io/linuxserver/unrar:latest AS unrar
-
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
@@ -176,7 +174,7 @@ RUN \
     pip3 install --break-system-packages --user .
 
 # install unrar
-COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
+#COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
 #RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-envfile/run \
 #       /etc/s6-overlay/s6-rc.d/init-migrations/run \
