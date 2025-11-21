@@ -32,3 +32,5 @@ else
       /usr/bin/qbittorrent-nox --webui-port="${WEBUI_PORT}" ${TORRENTING_PORT_ARG}
    fi
 fi
+
+bashio::log.info "**** Qbittorent service started ****"
