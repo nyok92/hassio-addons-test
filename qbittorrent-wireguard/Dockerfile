@@ -163,7 +163,16 @@ RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.
 # Switch scripts from s6 v2 to v3
 #RUN if [ -f /etc/s6-overlay/s6-rc.d/init-custom-file/run ]; then mkdir "/custom-cont-init.d" && for SCRIPTS in /etc/cont-init.d/*; do [ -e "$SCRIPTS" ] || continue \
 #    && mv "$SCRIPTS" /custom-cont-init.d && chmod a+x /custom-cont-init.d/*; done; fi
-    
+
+# Avoid spamming logs
+# hadolint ignore=SC2016
+RUN \
+    # Handle Nginx configuration
+    if [ -f /etc/nginx/nginx.conf ]; then \
+        awk '/http \{/{print; print "map $http_user_agent $dontlog {\n  default 0;\n  \"~*HealthCheck\" 1;\n}\naccess_log /var/log/nginx/access.log combined if=$dontlog;"; next}1' /etc/nginx/nginx.conf > /etc/nginx/nginx.conf.new && \
+        mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf; \
+    fi
+
 # install unrar
 #COPY --from=unrar /usr/bin/unrar-alpine /usr/bin/unrar
 
