@@ -1,5 +1,7 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+
+bashio::log.info "**** service coredns ****"
 
 if netstat -apn | grep -q ":53 " && [[ -z "${USE_COREDNS}" ]]; then
     USE_COREDNS="false"
