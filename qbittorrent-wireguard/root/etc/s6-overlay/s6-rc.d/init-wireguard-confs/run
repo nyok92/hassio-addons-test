@@ -2,6 +2,12 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2016,SC1091,SC2183
 
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+set -e
+
+bashio::log.info "**** Init wireguard confs ****"
+
 mkdir -p /config/wireguard
 
 # migration to subfolder for wg confs
