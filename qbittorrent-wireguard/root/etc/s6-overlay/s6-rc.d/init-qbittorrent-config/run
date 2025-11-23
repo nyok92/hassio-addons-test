@@ -1,28 +1,9 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
+
 set -e
 
 bashio::log.info "**** Init Qbittorent config ****"
-
-# make our folder
-mkdir -p /config/qBittorrent
-
-# copy default config
-if [[ ! -f /config/qBittorrent/qBittorrent.conf ]]; then
-    cp /defaults/qBittorrent.conf /config/qBittorrent/qBittorrent.conf
-fi
-
-if [[ -z ${LSIO_NON_ROOT_USER} ]]; then
-    # chown download directory if currently not set to abc
-    if grep -qe ' /downloads ' /proc/mounts; then
-        lsiown abc:abc /downloads
-    fi
-
-    # permissions
-    lsiown -R abc:abc \
-        /config
-fi
-
 
 ##########
 # INIT   #
