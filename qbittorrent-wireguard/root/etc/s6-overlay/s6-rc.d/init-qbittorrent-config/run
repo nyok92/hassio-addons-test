@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+bashio::log.info "**** Init Qbittorent config ****"
+
 # make our folder
 mkdir -p /config/qBittorrent
 
