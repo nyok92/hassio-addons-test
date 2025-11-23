@@ -3,6 +3,11 @@
 
 set -euo pipefail
 
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "**** service nginx ****"
+
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
 # File where the real (non-VPN) public IP is stored
