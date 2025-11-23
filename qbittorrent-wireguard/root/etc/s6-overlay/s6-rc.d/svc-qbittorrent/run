@@ -1,6 +1,11 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "**** service qbittorrent ****"
+
 WEBUI_PORT=${WEBUI_PORT:-8080}
 if [[ -n "${TORRENTING_PORT}" ]]; then
     TORRENTING_PORT_ARG="--torrenting-port=${TORRENTING_PORT}"
