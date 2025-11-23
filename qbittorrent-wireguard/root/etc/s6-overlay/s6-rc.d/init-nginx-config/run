@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 set -e
 
+bashio::log.info "**** Init nginx config ****"
+
 DEBUG=$(bashio::config 'TZ')
 [ "$DEBUG" = "debug" ] && echo "Before declare"
 
