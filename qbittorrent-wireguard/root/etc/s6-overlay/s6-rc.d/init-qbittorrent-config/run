@@ -1,6 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
-set -e
+
+#### set -e
 
 bashio::log.info "**** Init qbittorrent config ****"
 
