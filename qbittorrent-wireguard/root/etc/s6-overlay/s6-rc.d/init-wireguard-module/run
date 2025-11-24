@@ -1,7 +1,4 @@
-#!/usr/bin/with-contenv bashio
-# shellcheck shell=bash
-
-bashio::log.info "**** Init wireguard module ****"
+#!/usr/bin/with-contenv bash
 
 mkdir -p /config/{templates,coredns}
 
