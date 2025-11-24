@@ -45,6 +45,8 @@ if bashio::config.true 'wireguard_enabled'; then
           fi
       done
       ip route del default
-      bashio::log.warning "**** All tunnels are now down. Please fix the tunnel config ${FAILED} and restart the container ****"
+      bashio::log.info "**** All tunnels are now down. Please fix the tunnel config ${FAILED} and restart the container ****"
   fi
+else
+   bashio::log.info "**** Wireguard is not enabled, service wireguard not started ****"
 fi
