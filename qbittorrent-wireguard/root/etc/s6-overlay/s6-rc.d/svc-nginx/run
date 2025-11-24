@@ -8,7 +8,7 @@ bashio::log.info "**** service nginx ****"
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
 # File where the real (non-VPN) public IP is stored
-REAL_IP_FILE="/currentip"
+REAL_IP_FILE="/etc/s6-overlay/s6-rc.d/svc-nginx/currentip"
 
 # How often to re-check VPN IP (seconds)
 VPN_CHECK_INTERVAL="${VPN_CHECK_INTERVAL:-300}"
