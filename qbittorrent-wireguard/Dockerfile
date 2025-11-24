@@ -185,7 +185,9 @@ RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/svc-wireguard/finish \
     /etc/s6-overlay/s6-rc.d/svc-nginx/run \
     /etc/s6-overlay/s6-rc.d/svc-nginx/finish \
-    /etc/s6-overlay/s6-rc.d/init-nginx-config/run
+    /etc/s6-overlay/s6-rc.d/init-nginx-config/run \
+    /etc/s6-overlay/s6-rc.d/init-monitor/run \
+    /etc/s6-overlay/s6-rc.d/svc-monitor/run
 
 VOLUME /config
 
