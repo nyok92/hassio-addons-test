@@ -40,30 +40,7 @@ fi
 # Default folder #
 ##################
 
-# Set configuration
-if bashio::config.has_value 'SavePath'; then
 
-    # Set variable
-    DOWNLOADS=$(bashio::config 'SavePath')
-    DOWNLOADS=${DOWNLOADS:-/share/downloads} # Default if not set
-
-    # Replace save path
-    sed -i -e "/SavePath/d" \
-        -e "/\[Preferences\]/a Downloads\\\SavePath=$DOWNLOADS" \
-        -e "/\[AutoRun\]/a Downloads\\\DefaultSavePath=$DOWNLOADS" \
-        -e "/\[Preferences\]/a Downloads\\\DefaultSavePath=$DOWNLOADS" \
-        -e "/\[BitTorrent\]/a Downloads\\\DefaultSavePath=$DOWNLOADS" \
-        -e "/\[BitTorrent\]/a Session\\\DefaultSavePath=$DOWNLOADS" qBittorrent.conf
-
-    # Info
-    bashio::log.info "Downloads can be found in $DOWNLOADS"
-fi
-
-# Create default location
-if [ ! -d "$DOWNLOADS" ]; then
-    mkdir -p "$DOWNLOADS" || bashio::log.fatal "Error : folder defined in SavePath doesn't exist and can't be created. Check path"
-fi
-chown -R "$PUID:$PGID" "$DOWNLOADS" || bashio::log.fatal "Error, please check default save folder configuration in addon"
 
 ##############
 # Avoid bugs #
