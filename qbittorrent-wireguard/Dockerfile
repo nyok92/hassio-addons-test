@@ -11,7 +11,7 @@ RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
     elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
     fi && \
     echo "build arch is ${BUILD_ARCH}"
-############################################ Linux docker qbittorrent repo #################################
+############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
 RUN \
   if [ -z ${WIREGUARD_RELEASE+x} ]; then \
@@ -89,6 +89,24 @@ RUN echo "**** cleanup ****" && \
 COPY root/ /
 
 ############################################ Alexbelgium qbittorrent repo #################################
+
+# Set S6 wait time
+ENV S6_CMD_WAIT_FOR_SERVICES=1 \
+    S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
+    S6_SERVICES_GRACETIME=0
+
+# Environment variables
+ENV \
+    DEBIAN_FRONTEND="noninteractive"\
+    LANG="C.UTF-8" \
+    PS1="$(whoami)@$(hostname):$(pwd)$ " \
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_CMD_WAIT_FOR_SERVICES=1 \
+    TERM="xterm-256color" \
+    HOME="/config" \
+    XDG_CONFIG_HOME="/config" \
+    XDG_DATA_HOME="/config"
+
 # Image specific modifications
 # hadolint ignore=DL4006
 RUN \
@@ -163,6 +181,25 @@ RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.
 # Switch scripts from s6 v2 to v3
 #RUN if [ -f /etc/s6-overlay/s6-rc.d/init-custom-file/run ]; then mkdir "/custom-cont-init.d" && for SCRIPTS in /etc/cont-init.d/*; do [ -e "$SCRIPTS" ] || continue \
 #    && mv "$SCRIPTS" /custom-cont-init.d && chmod a+x /custom-cont-init.d/*; done; fi
+
+################
+# 4 Entrypoint #
+################
+
+RUN chmod +x /usr/local/bin/* /usr/local/sbin/*
+
+# Add entrypoint
+ENV S6_STAGE2_HOOK=/ha_entrypoint.sh
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_entrypoint.sh" "/ha_entrypoint.sh"
+
+# Entrypoint modifications
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_entrypoint_modif.sh" "/ha_entrypoint_modif.sh"
+RUN chmod 777 /ha_entrypoint.sh /ha_entrypoint_modif.sh && /ha_entrypoint_modif.sh && rm /ha_entrypoint_modif.sh
+
+# Standalone bashio command
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/bashio-standalone.sh" "/.bashio-standalone.sh"
+RUN chmod 777 /.bashio-standalone.sh
+
 
 # Avoid spamming logs
 # hadolint ignore=SC2016
