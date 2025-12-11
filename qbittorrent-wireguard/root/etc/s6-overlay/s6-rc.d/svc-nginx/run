@@ -4,5 +4,5 @@ set -euo pipefail
 
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
-bashio::log.info "Starting nginx..."
+bashio::log.info "Starting nginx service"
 exec nginx
