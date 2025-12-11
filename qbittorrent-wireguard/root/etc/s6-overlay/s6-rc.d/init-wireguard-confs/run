@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # shellcheck disable=SC2016,SC1091,SC2183
 
