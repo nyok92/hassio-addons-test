@@ -186,7 +186,7 @@ RUN \
 # 4 Entrypoint #
 ################
 
-RUN chmod +x /usr/local/bin/* /usr/local/sbin/*
+#RUN chmod +x /usr/local/bin/* /usr/local/sbin/*
 
 # Add entrypoint
 ENV S6_STAGE2_HOOK=/ha_entrypoint.sh
