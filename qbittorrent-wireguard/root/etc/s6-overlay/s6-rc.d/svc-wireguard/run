@@ -1,9 +1,8 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-bashio::log.info "**** starting service wireguard ****"
-
 if bashio::config.true 'wireguard_enabled'; then
+  bashio::log.info "**** starting service wireguard ****"
   unset WG_CONFS
   rm -rf /run/activeconfs
   # Enumerate interfaces
