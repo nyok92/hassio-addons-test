@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 set -e
 
+bashio::log.info "### init qbittorrent config ###"
+
 ##########
 # INIT   #
 ##########
