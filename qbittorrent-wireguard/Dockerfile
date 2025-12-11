@@ -7,10 +7,10 @@ ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
 
-RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
-    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
-    fi && \
-    echo "build arch is ${BUILD_ARCH}"
+#RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
+#    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
+#    fi && \
+#    echo "build arch is ${BUILD_ARCH}"
 ############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
 RUN \
@@ -71,7 +71,7 @@ RUN echo "***** install qbitorrent-cli ****" && \
     | jq -r '. | .tag_name'); \
   fi && \
   if [ "${BUILD_ARCH}" == "aarch64" ]; then PACKAGEPLATFORM=arm64; \
-    elif [ "${BUILD_ARCH}" == "amd64" ]; then PACKAGEPLATFORM=x64; \
+  elif [ "${BUILD_ARCH}" == "amd64" ]; then PACKAGEPLATFORM=x64; \
   fi && \
   echo installing with qbittorent "${QBT_CLI_VERSION}" on "${PACKAGEPLATFORM}" && \
   curl -o \
