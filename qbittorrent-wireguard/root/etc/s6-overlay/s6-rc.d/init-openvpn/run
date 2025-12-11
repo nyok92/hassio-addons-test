@@ -10,9 +10,7 @@ QBT_CONFIG_FILE="/config/qBittorrent/qBittorrent.conf"
 
 if bashio::config.true 'openvpn_enabled'; then
 
-    bashio::log.info "----------------------------"
-    bashio::log.info "Openvpn enabled, configuring"
-    bashio::log.info "----------------------------"
+    bashio::log.info "*** Openvpn enabled, configuring ***"
 
     # Get current ip
     curl -4 -s ipecho.net/plain > /currentip
