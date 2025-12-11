@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 set -euo pipefail
 
-bashio::log.info "### init monitor service ###"
+bashio::log.info "### starting monitor service ###"
 
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
