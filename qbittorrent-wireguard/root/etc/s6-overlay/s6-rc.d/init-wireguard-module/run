@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+bashio::log.info "### init wireguard module ###"
+
+
 mkdir -p /config/{templates,coredns}
 
 echo "Uname info: $(uname -a)"
