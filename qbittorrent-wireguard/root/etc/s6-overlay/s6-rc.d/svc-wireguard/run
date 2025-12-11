@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-bashio::log.info "**** service wireguard ****"
+bashio::log.info "**** starting service wireguard ****"
 
 if bashio::config.true 'wireguard_enabled'; then
   unset WG_CONFS
