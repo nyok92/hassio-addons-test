@@ -1,5 +1,5 @@
 name: qBittorrent-wireguard
-version: "1.0.9-3"
+version: "1.0.9-4"
 slug: qbittorrent-wireguard
 description: Bittorrent client with optional vpn
 url: "https://github.com/nyok92/hassio-addons-test/tree/main/qbittorrent-wireguard"
