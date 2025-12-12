@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
-set -euo pipefail
-
+#set -euo pipefail
+set -e
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 
 bashio::log.info "Starting nginx service"
