@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 set -euo pipefail
 
+if [[ "${openvpn_enabled}" == true && "${wireguard_enabled}" == true ]]; then
+
 bashio::log.info "*** starting monitor service ***"
 
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
@@ -197,3 +199,4 @@ while true; do
     fi
 
 done
+fi
