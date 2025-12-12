@@ -7,54 +7,6 @@ ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
 
-ARG MODS_VERSION="v3"
-ARG PKG_INST_VERSION="v1"
-ARG LSIOWN_VERSION="v1"
-ARG WITHCONTENV_VERSION="v1"
-
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/docker-mods.${MODS_VERSION}" "/docker-mods"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/package-install.${PKG_INST_VERSION}" "/etc/s6-overlay/s6-rc.d/init-mods-package-install/run"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
-ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/with-contenv.${WITHCONTENV_VERSION}" "/usr/bin/with-contenv"
-
-# environment variables
-ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
-  HOME="/root" \
-  TERM="xterm" \
-  S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
-  S6_VERBOSITY=1 \
-  S6_STAGE2_HOOK=/docker-mods \
-  VIRTUAL_ENV=/lsiopy \
-  PATH="/lsiopy/bin:$PATH"
-
-RUN \
-  echo "**** install runtime packages ****" && \
-  apk add --no-cache \
-    alpine-release \
-    bash \
-    ca-certificates \
-    catatonit \
-    coreutils \
-    curl \
-    findutils \
-    jq \
-    netcat-openbsd \
-    procps-ng \
-    shadow \
-    tzdata && \
-  echo "**** create abc user and make our folders ****" && \
-  groupmod -g 1000 users && \
-  useradd -u 911 -U -d /config -s /bin/false abc && \
-  usermod -G users abc && \
-  mkdir -p \
-    /app \
-    /config \
-    /defaults \
-    /lsiopy && \
-  echo "**** cleanup ****" && \
-  rm -rf \
-    /tmp/*
-
 ############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
 RUN \
@@ -148,14 +100,7 @@ RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-openvpn/run \
     /etc/s6-overlay/s6-rc.d/init-qbit-manage/run \
     /etc/s6-overlay/s6-rc.d/init-monitor/run \
-    /etc/s6-overlay/s6-rc.d/svc-monitor/run \
-    /etc/s6-overlay/s6-rc.d/init-migrations/run \
-    /etc/s6-overlay/s6-rc.d/init-envfile/run \
-    /etc/s6-overlay/s6-rc.d/init-adduser/run \
-    /etc/s6-overlay/s6-rc.d/init-crontab-config/run \
-    /etc/s6-overlay/s6-rc.d/init-custom-files/run \
-    /etc/s6-overlay/s6-rc.d/init-device-perms/run \
-    /etc/s6-overlay/s6-rc.d/svc-cron/run
+    /etc/s6-overlay/s6-rc.d/svc-monitor/run
 
 VOLUME /config
 
