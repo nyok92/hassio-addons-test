@@ -17,6 +17,16 @@ ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-s
 ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
 ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/with-contenv.${WITHCONTENV_VERSION}" "/usr/bin/with-contenv"
 
+# environment variables
+ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
+  HOME="/root" \
+  TERM="xterm" \
+  S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
+  S6_VERBOSITY=1 \
+  S6_STAGE2_HOOK=/docker-mods \
+  VIRTUAL_ENV=/lsiopy \
+  PATH="/lsiopy/bin:$PATH"
+
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
