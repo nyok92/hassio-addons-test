@@ -3,7 +3,7 @@
 
 if bashio::config.true 'wireguard_enabled'; then
 
-    bashio::log.info "### init wireguard module ###"
+    bashio::log.info "*** init wireguard module ***"
 
     mkdir -p /config/{templates,coredns}
 
