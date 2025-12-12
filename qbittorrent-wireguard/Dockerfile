@@ -6,6 +6,10 @@ ARG PACKAGEPLATFORM
 ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
+
+ARG LSIOWN_VERSION="v1"
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
+
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
