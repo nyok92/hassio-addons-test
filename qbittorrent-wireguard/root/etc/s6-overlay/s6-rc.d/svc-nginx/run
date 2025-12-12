@@ -2,7 +2,10 @@
 # shellcheck shell=bash
 #set -euo pipefail
 set -e
-export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/bin:${PATH}"
 
 bashio::log.info "Starting nginx service"
 exec nginx
+#exec \
+#    s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost ${WEBUI_PORT}" \
+#    s6-setuidgid abc /usr/bin/nginx
