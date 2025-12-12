@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+bashio::log.info "*** init folders ***"
+
 mkdir -p /config/qBittorrent
 mkdir -p /config/wireguard
 mkdir -p /config/openvpn
