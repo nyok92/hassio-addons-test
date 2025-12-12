@@ -1,14 +1,42 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-ARG BUILD_ARCH
-ARG PACKAGEPLATFORM
-ARG WIREGUARD_RELEASE
-ARG QBITTORRENT_VERSION
-ARG QBT_CLI_VERSION
+############################################ Linuxserver Base image ###############################
+ARG LSIOWN_VERSION="v1"
+ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-scripts/lsiown.${LSIOWN_VERSION}" "/usr/bin/lsiown"
+
+RUN \
+  echo "**** install runtime packages ****" && \
+  apk add --no-cache \
+    alpine-release \
+    bash \
+    ca-certificates \
+    catatonit \
+    coreutils \
+    curl \
+    findutils \
+    jq \
+    netcat-openbsd \
+    procps-ng \
+    shadow \
+    tzdata && \
+  echo "**** create abc user and make our folders ****" && \
+  groupmod -g 1000 users && \
+  useradd -u 911 -U -d /config -s /bin/false abc && \
+  usermod -G users abc && \
+  mkdir -p \
+    /app \
+    /config \
+    /defaults \
+    /lsiopy && \
+  echo "**** cleanup ****" && \
+  rm -rf \
+    /tmp/*
 
 ############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
+ARG WIREGUARD_RELEASE
+
 RUN \
   if [ -z ${WIREGUARD_RELEASE+x} ]; then \
   WIREGUARD_RELEASE=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/APKINDEX.tar.gz" | tar -xz -C /tmp \
@@ -41,6 +69,11 @@ RUN \
     /tmp/*
 ############################################ Linux docker qbittorrent repo #################################
 # build environment settings
+ARG QBITTORRENT_VERSION
+ARG PACKAGEPLATFORM
+ARG QBT_CLI_VERSION
+ARG BUILD_ARCH
+
 ENV HOME="/config" \
 XDG_CONFIG_HOME="/config" \
 XDG_DATA_HOME="/config"
