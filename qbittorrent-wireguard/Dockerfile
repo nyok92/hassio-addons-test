@@ -118,7 +118,8 @@ RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-monitor/run \
     /etc/s6-overlay/s6-rc.d/svc-monitor/run \
     /etc/s6-overlay/s6-rc.d/init-migrations/run \
-    /etc/s6-overlay/s6-rc.d/init-envfile/run
+    /etc/s6-overlay/s6-rc.d/init-envfile/run \
+    /etc/s6-overlay/s6-rc.d/init-adduser/run
 
 VOLUME /config
 
