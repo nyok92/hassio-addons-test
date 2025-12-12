@@ -17,9 +17,10 @@ if bashio::config.true 'wireguard_enabled'; then
             echo "**** As the wireguard module is already active you can remove the SYS_MODULE capability from your container run/compose. ****"
             echo "****     If your host does not automatically load the iptables module, you may still need the SYS_MODULE capability.     ****"
         fi
+        exit 0
     else
         echo "**** The wireguard module is not active. If you believe that your kernel should have wireguard support already, make sure that it is activated via modprobe! ****"
-       # sleep infinity
+        # sleep infinity
+        exit 0
     fi
-    exit 0
 fi
