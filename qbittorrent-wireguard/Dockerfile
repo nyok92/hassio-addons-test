@@ -6,8 +6,11 @@ ARG PACKAGEPLATFORM
 ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
-
-RUN echo "**** create abc user and make our folders ****" && \
+RUN \
+  echo "**** install runtime packages ****" && \
+  apk add --no-cache \
+    shadow && \
+  echo "**** create abc user and make our folders ****" && \
   groupmod -g 1000 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \
   usermod -G users abc && \
