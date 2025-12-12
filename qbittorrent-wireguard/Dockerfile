@@ -13,7 +13,18 @@ ADD --chmod=755 "https://raw.githubusercontent.com/linuxserver/docker-mods/mod-s
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
-    shadow && \
+    alpine-release \
+    bash \
+    ca-certificates \
+    catatonit \
+    coreutils \
+    curl \
+    findutils \
+    jq \
+    netcat-openbsd \
+    procps-ng \
+    shadow \
+    tzdata && \
   echo "**** create abc user and make our folders ****" && \
   groupmod -g 1000 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \
