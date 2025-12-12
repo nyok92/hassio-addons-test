@@ -7,6 +7,19 @@ ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
 
+RUN echo "**** create abc user and make our folders ****" && \
+  groupmod -g 1000 users && \
+  useradd -u 911 -U -d /config -s /bin/false abc && \
+  usermod -G users abc && \
+  mkdir -p \
+    /app \
+    /config \
+    /defaults \
+    /lsiopy && \
+  echo "**** cleanup ****" && \
+  rm -rf \
+    /tmp/*
+
 ############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
 RUN \
