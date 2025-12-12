@@ -20,6 +20,7 @@ RUN \
   fi && \
   echo "**** install dependencies ****" && \
   apk add --no-cache \
+    nginx \
     bc \
     coredns \
     grep \
@@ -40,6 +41,7 @@ RUN \
   ln -s /config/wireguard /etc/wireguard && \
   echo "**** clean up ****" && \
   rm -rf \
+    /etc/nginx \
     /tmp/*
 ############################################ Linux docker qbittorrent repo #################################
 # build environment settings
