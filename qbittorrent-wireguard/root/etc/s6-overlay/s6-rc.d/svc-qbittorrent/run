@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-bashio::log.info "### starting qbittorrent service ###"
+bashio::log.info "*** starting qbittorrent service ***"
 
 
 WEBUI_PORT=${WEBUI_PORT:-8080}
