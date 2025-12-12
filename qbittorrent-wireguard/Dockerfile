@@ -38,7 +38,7 @@ RUN \
   echo "wireguard" >> /etc/modules && \
   sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1|[[ $proto == -4 ]] \&\& [[ $(sysctl -n net.ipv4.conf.all.src_valid_mark) != 1 ]] \&\& cmd sysctl -q net.ipv4.conf.all.src_valid_mark=1|' /usr/bin/wg-quick && \
   rm -rf /etc/wireguard && \
-  ln -s /config/wireguard /etc/wireguard && \
+  ln -s /config/wg_confs /etc/wireguard && \
   echo "**** clean up ****" && \
   rm -rf \
     /etc/nginx \
