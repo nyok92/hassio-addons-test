@@ -7,7 +7,7 @@ export PGID=$(bashio::config 'PGID')
 PUID=${PUID:-911}
 PGID=${PGID:-911}
 
-if [[ -z ${LSIO_NON_ROOT_USER} ]]; then
+if [[ -z ${LSIO_READ_ONLY_FS} ]] && [[ -z ${LSIO_NON_ROOT_USER} ]]; then
     USERHOME=$(grep abc /etc/passwd | cut -d ":" -f6)
     usermod -d "/root" abc
 
@@ -17,6 +17,17 @@ if [[ -z ${LSIO_NON_ROOT_USER} ]]; then
     usermod -d "${USERHOME}" abc
 fi
 
+if { [[ -z ${LSIO_READ_ONLY_FS} ]] && [[ -z ${LSIO_NON_ROOT_USER} ]]; } || [[ ! ${LSIO_FIRST_PARTY} = "true" ]]; then
+    cat /etc/s6-overlay/s6-rc.d/init-adduser/branding
+else
+    cat /run/branding
+fi
+
+if [[ -f /donate.txt ]]; then
+    echo '
+To support the app dev(s) visit:'
+    cat /donate.txt
+fi
 echo '
 To support LSIO projects visit:
 https://www.linuxserver.io/donate/
