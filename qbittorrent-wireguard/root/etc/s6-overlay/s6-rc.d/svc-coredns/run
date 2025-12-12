@@ -1,6 +1,9 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
+
+if bashio::config.true 'wireguard_enabled'; then
+
 bashio::log.info "**** service coredns ****"
 
 if netstat -apn | grep -q ":53 " && [[ -z "${USE_COREDNS}" ]]; then
@@ -22,4 +25,5 @@ else
             cd /config/coredns \
             /usr/bin/coredns -dns.port=53
     fi
+fi
 fi
