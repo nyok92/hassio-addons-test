@@ -75,7 +75,7 @@ RUN echo "***** install qbitorrent-cli ****" && \
   curl -o \
   /tmp/qbt.tar.gz -L \
   "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${PACKAGEPLATFORM}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
-  tar xzvf \
+  tar xf \
   /tmp/qbt.tar.gz -C \
   /qbt
 RUN echo "**** cleanup ****" && \
