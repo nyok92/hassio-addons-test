@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 set -euo pipefail
 
-bashio::log.info "### init monitor ###"
+bashio::log.info "*** init monitor ***"
 
 if ! bashio::config.true 'openvpn_enabled' && ! bashio::config.true 'wireguard_enabled'; then
     # No VPN enabled: remove monitoring service to avoid unnecessary restarts
