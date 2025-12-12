@@ -83,6 +83,9 @@ RUN echo "**** cleanup ****" && \
   /root/.cache \
   /tmp/*
 
+# add local files
+COPY root/ /
+
 ############################################ Alexbelgium qbittorrent repo #################################
 
 # Set S6 wait time
@@ -147,10 +150,6 @@ RUN \
     apk add --no-cache py3-pip gcc musl-dev && \
     cd /qbit_manage && \
     pip3 install --break-system-packages --user .
-
-
-# add local files
-COPY root/ /
 
 RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
