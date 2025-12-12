@@ -7,10 +7,6 @@ ARG WIREGUARD_RELEASE
 ARG QBITTORRENT_VERSION
 ARG QBT_CLI_VERSION
 
-#RUN if [ "${BUILD_ARCH}" == "aarch64" ]; then BUILD_ARCH=arm64; \
-#    elif [ "${BUILD_ARCH}" == "amd64" ]; then BUILD_ARCH=amd64; \
-#    fi && \
-#    echo "build arch is ${BUILD_ARCH}"
 ############################################ Linux wireguard repo #################################
 ## Install Wireguard & dependencies
 RUN \
@@ -60,7 +56,7 @@ RUN \
     python3 \
     qt6-qtbase-sqlite && \
   if [ -z ${QBITTORRENT_VERSION+x} ]; then \
-    QBITTORRENT_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz" | tar -xzvf -C /tmp \
+    QBITTORRENT_VERSION=$(curl -sL "http://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz" | tar xzvf -C /tmp \
     && awk '/^P:qbittorrent-nox$/,/V:/' /tmp/APKINDEX | sed -n 2p | sed 's/^V://'); \
   fi && \
   apk add -U --upgrade --no-cache \
@@ -79,7 +75,7 @@ RUN echo "***** install qbitorrent-cli ****" && \
   curl -o \
   /tmp/qbt.tar.gz -L \
   "https://github.com/fedarovich/qbittorrent-cli/releases/download/${QBT_CLI_VERSION}/qbt-linux-alpine-${PACKAGEPLATFORM}-net6-${QBT_CLI_VERSION#v}.tar.gz" && \
-  tar -xzvf \
+  tar xzvf \
   /tmp/qbt.tar.gz -C \
   /qbt
 RUN echo "**** cleanup ****" && \
