@@ -6,7 +6,7 @@ if bashio::config.true 'wireguard_enabled'; then
   unset WG_CONFS
   rm -rf /run/activeconfs
   # Enumerate interfaces
-  for wgconf in /config/wg_confs/*.conf; do
+  for wgconf in /config/wireguard/*.conf; do
       if grep -q "\[Interface\]" "${wgconf}"; then
           bashio::log.info "**** Found WG conf ${wgconf}, adding to list ****"
           WG_CONFS+=("${wgconf}")
