@@ -184,6 +184,10 @@ RUN \
     cd /qbit_manage && \
     pip3 install --break-system-packages --user .
 
+# Automatic apps & bashio
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/ha_autoapps.sh" "/ha_autoapps.sh"
+RUN chmod 744 /ha_autoapps.sh && /ha_autoapps.sh "$PACKAGES" && rm /ha_autoapps.sh
+
 # Standalone bashio command
 ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/bashio-standalone.sh" "/.bashio-standalone.sh"
 RUN chmod 777 /.bashio-standalone.sh
