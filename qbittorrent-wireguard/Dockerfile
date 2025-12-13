@@ -184,6 +184,10 @@ RUN \
     cd /qbit_manage && \
     pip3 install --break-system-packages --user .
 
+# Standalone bashio command
+ADD "https://raw.githubusercontent.com/alexbelgium/hassio-addons/master/.templates/bashio-standalone.sh" "/.bashio-standalone.sh"
+RUN chmod 777 /.bashio-standalone.sh
+
 RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
     /etc/s6-overlay/s6-rc.d/svc-wireguard/run \
