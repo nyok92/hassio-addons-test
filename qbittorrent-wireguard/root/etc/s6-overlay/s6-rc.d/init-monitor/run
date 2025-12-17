@@ -6,7 +6,7 @@ bashio::log.info "*** init monitor ***"
 
 if ! bashio::config.true 'openvpn_enabled' && ! bashio::config.true 'wireguard_enabled'; then
     # No VPN enabled: remove monitoring service to avoid unnecessary restarts
-    rm -rf /etc/services.d/vpn-monitor
+    rm -rf /etc/s6-overlay/s6-rc.d/svc-monitor
     exit 0
 fi
 
@@ -38,3 +38,4 @@ _fetch_public_ip() {
 }
 
 echo "$(_fetch_public_ip || true)" > /currentip
+bashio::log.info "*** real IP is $(_fetch_public_ip || true) ***"
