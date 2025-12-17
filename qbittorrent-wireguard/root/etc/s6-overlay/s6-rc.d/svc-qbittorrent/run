@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-bashio::log.info "*** starting qbittorrent service ***"
+bashio::log.info "*** starting vpn service ***"
 
 
 WEBUI_PORT=${WEBUI_PORT:-8080}
@@ -44,6 +44,8 @@ fi
 
 if [[ "${openvpn_enabled}" == true ]]; then
 
+bashio::log.info "Starting openvpn connection..."
+
     exec /usr/sbin/openvpn \
         --config /config/openvpn/config.ovpn \
         --script-security 2 \
@@ -59,7 +61,7 @@ if [[ "${openvpn_enabled}" == true ]]; then
 elif [[ "${wireguard_enabled}" == true ]]; then
 
 #declare interface
-bashio::log.info "Starting WireGuard Client..."
+bashio::log.info "Starting WireGuard connection..."
 
 # This is alpha software. We need to set this to instruct
 # WireGuard we are OK to go.
@@ -107,18 +109,3 @@ exec wg-quick up "${wireguard_config}"
    fi
 
 fi
-
-# --- Launch qBittorrent ---
-
-# Determine log output based on silent mode
-QB_OUTPUT="/dev/stdout"
-if bashio::config.true 'silent'; then
-    QB_OUTPUT="/dev/null"
-fi
-
-bashio::log.info "Starting qBittorrent..."
-
-exec \
-    s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost ${WEBUI_PORT}" \
-       /usr/bin/qbittorrent-nox --webui-port="${WEBUI_PORT}" > "${QB_OUTPUT}"
-#    s6-setuidgid abc /usr/bin/qbittorrent-nox --webui-port="${WEBUI_PORT}" > "${QB_OUTPUT}"
