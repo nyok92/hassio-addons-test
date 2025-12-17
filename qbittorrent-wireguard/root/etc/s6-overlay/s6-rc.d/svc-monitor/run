@@ -2,6 +2,9 @@
 # shellcheck shell=bash
 set -euo pipefail
 
+openvpn_enabled=false
+wireguard_enabled=false
+
 if bashio::config.true 'openvpn_enabled' ; then
   openvpn_enabled=true
 fi
