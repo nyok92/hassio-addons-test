@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
 WIREGUARD_STATE_DIR="/var/run/wireguard"
