@@ -102,10 +102,9 @@ bashio::log.info "Starting WireGuard interface ${wireguard_interface}..."
 exec wg-quick up "${wireguard_config}"
 
 # DNS Refresh
-#    if command -v resolvconf >/dev/null 2>&1; then
-#        resolvconf -u >/dev/null 2>&1 || bashio::log.warning 'resolvconf -u failed.'
-#    fi
-resolvconf -u
+   if command -v resolvconf >/dev/null 2>&1; then
+      resolvconf -u >/dev/null 2>&1 || bashio::log.warning 'resolvconf -u failed.'
+   fi
 
 fi
 
