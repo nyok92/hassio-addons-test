@@ -16,9 +16,10 @@ fi
 # --- WireGuard Specific Logic ---
 
 WIREGUARD_STATE_DIR="/var/run/wireguard"
-
-if ! bashio::fs.file_exists "${WIREGUARD_STATE_DIR}/config"; then
-   bashio::exit.nok 'WireGuard runtime configuration not prepared. Please restart the add-on.'
+if bashio::config.true 'wireguard_enabled'; then
+   if ! bashio::fs.file_exists "${WIREGUARD_STATE_DIR}/config"; then
+      bashio::exit.nok 'WireGuard runtime configuration not prepared. Please restart the add-on.'
+   fi
 fi
 
 wireguard_config="$(cat "${WIREGUARD_STATE_DIR}/config")"
