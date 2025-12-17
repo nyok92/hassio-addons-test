@@ -13,14 +13,9 @@ usermod -d "/root" abc
 
 groupmod -o -g "${PGID}" abc
 usermod -o -u "${PUID}" abc
-
 usermod -d "${USERHOME}" abc
 
-echo '
-───────────────────────────────────────
-GID/UID
-───────────────────────────────────────'
-echo "
+bashio::log.info "───────────────────────────────────────
 User UID:    $(id -u abc)
 User GID:    $(id -g abc)
 ───────────────────────────────────────"
