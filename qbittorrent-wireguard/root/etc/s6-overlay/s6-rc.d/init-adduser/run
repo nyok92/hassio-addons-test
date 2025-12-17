@@ -7,34 +7,24 @@ export PGID=$(bashio::config 'PGID')
 PUID=${PUID:-911}
 PGID=${PGID:-911}
 
-if [[ -z ${LSIO_READ_ONLY_FS} ]] && [[ -z ${LSIO_NON_ROOT_USER} ]]; then
-    USERHOME=$(grep abc /etc/passwd | cut -d ":" -f6)
-    usermod -d "/root" abc
 
-    groupmod -o -g "${PGID}" abc
-    usermod -o -u "${PUID}" abc
+USERHOME=$(grep abc /etc/passwd | cut -d ":" -f6)
+usermod -d "/root" abc
 
-    usermod -d "${USERHOME}" abc
-fi
+groupmod -o -g "${PGID}" abc
+usermod -o -u "${PUID}" abc
+
+usermod -d "${USERHOME}" abc
 
 echo '
 ───────────────────────────────────────
 GID/UID
 ───────────────────────────────────────'
-if [[ -z ${LSIO_NON_ROOT_USER} ]]; then
 echo "
 User UID:    $(id -u abc)
 User GID:    $(id -g abc)
 ───────────────────────────────────────"
-else
-echo "
-User UID:    $(stat /run -c %u)
-User GID:    $(stat /run -c %g)
-───────────────────────────────────────"
-fi
 
-if [[ -z ${LSIO_READ_ONLY_FS} ]] && [[ -z ${LSIO_NON_ROOT_USER} ]]; then
-    lsiown abc:abc /app
-    lsiown abc:abc /config
-    lsiown abc:abc /defaults
-fi
+lsiown abc:abc /app
+lsiown abc:abc /config
+lsiown abc:abc /defaults
