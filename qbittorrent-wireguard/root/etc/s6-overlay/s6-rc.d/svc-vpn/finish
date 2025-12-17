@@ -1,9 +1,11 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 
-WIREGUARD_STATE_DIR="/var/run/wireguard"
-wireguard_config="$(cat "${WIREGUARD_STATE_DIR}/config")"
-wireguard_interface="$(cat "${WIREGUARD_STATE_DIR}/interface" 2>/dev/null || echo 'wg0')"
+if bashio::config.true 'wireguard_enabled'; then
+   WIREGUARD_STATE_DIR="/var/run/wireguard"
+   wireguard_config="$(cat "${WIREGUARD_STATE_DIR}/config")"
+   wireguard_interface="$(cat "${WIREGUARD_STATE_DIR}/interface" 2>/dev/null || echo 'wg0')"
+fi
 
 bashio::log.info "Stopping WireGuard Client container..."
 
