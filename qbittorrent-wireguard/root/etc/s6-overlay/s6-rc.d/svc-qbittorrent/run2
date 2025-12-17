@@ -1,0 +1,124 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+
+bashio::log.info "*** starting qbittorrent service ***"
+
+
+WEBUI_PORT=${WEBUI_PORT:-8080}
+export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
+
+# --- Configuration & Pre-checks ---
+
+if bashio::config.true 'silent'; then
+    sed -i 's|/proc/1/fd/1 hassio;|off;|g' /etc/nginx/nginx.conf
+fi
+
+# --- WireGuard Specific Logic ---
+
+    WIREGUARD_STATE_DIR="/var/run/wireguard"
+
+    if ! bashio::fs.file_exists "${WIREGUARD_STATE_DIR}/config"; then
+        bashio::exit.nok 'WireGuard runtime configuration not prepared. Please restart the add-on.'
+    fi
+
+    wireguard_config="$(cat "${WIREGUARD_STATE_DIR}/config")"
+    wireguard_interface="$(cat "${WIREGUARD_STATE_DIR}/interface" 2>/dev/null || echo 'wg0')"
+
+# --- Main Execution ---
+
+openvpn_enabled=false
+wireguard_enabled=false
+
+if bashio::config.true 'openvpn_enabled'; then
+    openvpn_enabled=true
+fi
+
+if bashio::config.true 'wireguard_enabled'; then
+    wireguard_enabled=true
+fi
+
+if [[ "${openvpn_enabled}" == true && "${wireguard_enabled}" == true ]]; then
+    bashio::log.error "Both OpenVPN and WireGuard are enabled. Only one VPN mode is supported."
+    exit 1
+fi
+
+if [[ "${openvpn_enabled}" == true ]]; then
+
+    exec /usr/sbin/openvpn \
+        --config /config/openvpn/config.ovpn \
+        --script-security 2 \
+        --up /etc/openvpn/up.sh \
+        --down /etc/openvpn/down.sh \
+        --pull-filter ignore "route-ipv6" \
+        --pull-filter ignore "ifconfig-ipv6" \
+        --pull-filter ignore "tun-ipv6" \
+        --pull-filter ignore "redirect-gateway ipv6" \
+        --pull-filter ignore "dhcp-option DNS6" \
+    &
+
+elif [[ "${wireguard_enabled}" == true ]]; then
+
+#declare interface
+bashio::log.info "Starting WireGuard Client..."
+
+# This is alpha software. We need to set this to instruct
+# WireGuard we are OK to go.
+export WG_I_PREFER_BUGGY_USERSPACE_TO_POLISHED_KMOD=1
+
+# Get the interface
+#interface="wg0"
+
+# Check if interface already exists and clean it up
+if ip link show "${wireguard_interface}" >/dev/null 2>&1; then
+    bashio::log.warning "Interface ${wireguard_interface} already exists, cleaning up..."
+
+    # Try to stop existing interface
+    if wg-quick down "${wireguard_interface}" 2>/dev/null; then
+        bashio::log.info "Existing interface stopped successfully"
+    else
+        bashio::log.warning "Failed to stop existing interface, performing manual cleanup..."
+
+        # Manual cleanup
+        ip route del dev "${wireguard_interface}" 2>/dev/null || true
+        ip addr flush dev "${wireguard_interface}" 2>/dev/null || true
+        ip link set "${wireguard_interface}" down 2>/dev/null || true
+        ip link delete "${wireguard_interface}" 2>/dev/null || true
+    fi
+
+    # Wait a moment for cleanup to complete
+    sleep 2
+
+    # Verify interface is removed
+    if ip link show "${wireguard_interface}" >/dev/null 2>&1; then
+        bashio::log.error "Failed to remove existing interface ${wireguard_interface}"
+        bashio::exit.nok "Cannot start WireGuard: interface ${wireguard_interface} already exists"
+    else
+        bashio::log.info "Interface ${wireguard_interface} cleanup completed"
+    fi
+fi
+
+# Run the WireGuard
+bashio::log.info "Starting WireGuard interface ${wireguard_interface}..."
+exec wg-quick up "${wireguard_config}"
+
+# DNS Refresh
+   if command -v resolvconf >/dev/null 2>&1; then
+      resolvconf -u >/dev/null 2>&1 || bashio::log.warning 'resolvconf -u failed.'
+   fi
+
+fi
+
+# --- Launch qBittorrent ---
+
+# Determine log output based on silent mode
+QB_OUTPUT="/dev/stdout"
+if bashio::config.true 'silent'; then
+    QB_OUTPUT="/dev/null"
+fi
+
+bashio::log.info "Starting qBittorrent..."
+
+exec \
+    s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost ${WEBUI_PORT}" \
+       /usr/bin/qbittorrent-nox --webui-port="${WEBUI_PORT}" > "${QB_OUTPUT}"
+#    s6-setuidgid abc /usr/bin/qbittorrent-nox --webui-port="${WEBUI_PORT}" > "${QB_OUTPUT}"
