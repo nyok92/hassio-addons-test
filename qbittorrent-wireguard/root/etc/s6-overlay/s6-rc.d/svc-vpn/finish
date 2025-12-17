@@ -1,0 +1,43 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+WIREGUARD_STATE_DIR="/var/run/wireguard"
+wireguard_config="$(cat "${WIREGUARD_STATE_DIR}/config")"
+wireguard_interface="$(cat "${WIREGUARD_STATE_DIR}/interface" 2>/dev/null || echo 'wg0')"
+
+bashio::log.info "Stopping WireGuard Client container..."
+
+# Check if wireguard_interface exists before trying to stop it
+if ip link show "${wireguard_interface}" >/dev/null 2>&1; then
+    bashio::log.info "wireguard_interface ${wireguard_interface} found, stopping WireGuard..."
+
+    # Try to stop with wg-quick first
+    if wg-quick down "${wireguard_interface}" 2>/dev/null; then
+        bashio::log.info "WireGuard stopped successfully with wg-quick"
+    else
+        bashio::log.warning "wg-quick down failed, performing manual cleanup..."
+
+        # Manual cleanup if wg-quick fails
+        ip route del dev "${wireguard_interface}" 2>/dev/null || true
+        ip addr flush dev "${wireguard_interface}" 2>/dev/null || true
+        ip link set "${wireguard_interface}" down 2>/dev/null || true
+        ip link delete "${wireguard_interface}" 2>/dev/null || true
+
+        bashio::log.info "Manual cleanup completed"
+    fi
+
+    # Verify wireguard_interface is removed
+    if ip link show "${wireguard_interface}" >/dev/null 2>&1; then
+        bashio::log.warning "wireguard_interface ${wireguard_interface} still exists, forcing removal..."
+        ip link delete "${wireguard_interface}" 2>/dev/null || true
+    else
+        bashio::log.info "wireguard_interface ${wireguard_interface} successfully removed"
+    fi
+else
+    bashio::log.info "wireguard_interface ${wireguard_interface} not found, nothing to stop"
+fi
+
+# Clean up any remaining WireGuard processes
+pkill -f "wg-quick" 2>/dev/null || true
+
+bashio::log.info "WireGuard Client stop completed"
