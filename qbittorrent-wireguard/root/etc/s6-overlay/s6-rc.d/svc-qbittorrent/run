@@ -99,7 +99,7 @@ fi
 
 # Run the WireGuard
 bashio::log.info "Starting WireGuard interface ${wireguard_interface}..."
-exec wg-quick up "${wireguard_interface}"
+exec wg-quick up "${wireguard_config}"
 
 fi
 
