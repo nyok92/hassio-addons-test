@@ -196,10 +196,10 @@ RUN chmod 777 /.bashio-standalone.sh
 
 RUN chmod a+x /etc/s6-overlay/s6-rc.d/init-wireguard-confs/run \
     /etc/s6-overlay/s6-rc.d/init-wireguard-module/run \
-    /etc/s6-overlay/s6-rc.d/svc-wireguard/run \
-    /etc/s6-overlay/s6-rc.d/svc-wireguard/finish \
     /etc/s6-overlay/s6-rc.d/init-qbittorrent-config/run \
     /etc/s6-overlay/s6-rc.d/svc-qbittorrent/run \
+    /etc/s6-overlay/s6-rc.d/svc-vpn/run \
+    /etc/s6-overlay/s6-rc.d/svc-vpn/finish \
     /etc/s6-overlay/s6-rc.d/svc-coredns/run \
     /etc/s6-overlay/s6-rc.d/svc-nginx/run \
     /etc/s6-overlay/s6-rc.d/svc-nginx/finish \
