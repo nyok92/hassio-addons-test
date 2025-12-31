@@ -14,7 +14,7 @@ if ip link show "${wireguard_interface}" >/dev/null 2>&1; then
     bashio::log.info "wireguard_interface ${wireguard_interface} found, stopping WireGuard..."
 
     # Try to stop with wg-quick first
-    if wg-quick down "${wireguard_interface}" 2>/dev/null; then
+    if wg-quick down "${wireguard_config}" 2>/dev/null; then
         bashio::log.info "WireGuard stopped successfully with wg-quick"
     else
         bashio::log.warning "wg-quick down failed, performing manual cleanup..."
