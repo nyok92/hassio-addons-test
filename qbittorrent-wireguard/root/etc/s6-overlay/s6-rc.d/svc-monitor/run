@@ -341,4 +341,6 @@ while true; do
         VPN_IPv6="${current_ipv6}"
     fi
 
+    bashio::log.info "Requesting current status from WireGuard Client..."
+    exec wg show > /dev/stdout
 done
