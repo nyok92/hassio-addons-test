@@ -101,8 +101,4 @@ elif [[ "${wireguard_enabled}" == true ]]; then
    if command -v resolvconf >/dev/null 2>&1; then
       resolvconf -u >/dev/null 2>&1 || bashio::log.warning 'resolvconf -u failed.'
    fi
-
-   sleep 5
-   bashio::log.info "Requesting current status from WireGuard Client..."
-   exec wg show > /dev/stdout
 fi
