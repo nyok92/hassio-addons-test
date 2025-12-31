@@ -115,7 +115,7 @@ wait_for_vpn_ip() {
         if out="$(get_ip_info)"; then
             read -r ip country <<< "${out}"
 
-            if [[ -n "${REAL_IP:-}" ]] && [[ "${ip}" == "${REAL_IP}" ]]; then
+            if [[ -n "${REAL_IPv4:-}" ]] && [[ "${ip}" == "${REAL_IPv4}" ]]; then
                 bashio::log.warning \
                     "External IP still equals real IP (${ip}); VPN not ready yet (attempt ${attempt}/5)."
             else
@@ -165,10 +165,10 @@ if [[ "${vpn_openvpn}" == true && "${vpn_wireguard}" == true ]]; then
     exit 1
 fi
 
-REAL_IP="$(read_real_ipv4)"
+REAL_IPv4="$(read_real_ipv4)"
 
-if [[ -n "${REAL_IP}" ]]; then
-    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILEv4}: ${REAL_IP}"
+if [[ -n "${REAL_IPv4}" ]]; then
+    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILEv4}: ${REAL_IPv4}"
 else
     bashio::log.warning "Real IP file ${REAL_IP_FILEv4} missing or empty; IP leak detection will be less strict."
 fi
@@ -197,13 +197,13 @@ while true; do
 
     bashio::log.info "Current external IP: ${current_ip} (${current_country})"
 
-    if [[ -n "${REAL_IP}" ]] && [[ "${current_ip}" == "${REAL_IP}" ]]; then
-        bashio::log.error "IP LEAK DETECTED: current external IP ${current_ip} matches real IP ${REAL_IP}. Stopping add-on."
+    if [[ -n "${REAL_IPv4}" ]] && [[ "${current_ip}" == "${REAL_IPv4}" ]]; then
+        bashio::log.error "IP LEAK DETECTED: current external IP ${current_ip} matches real IP ${REAL_IPv4}. Stopping add-on."
         bashio::addon.stop
         exit 1
     fi
 
-    if [[ -z "${REAL_IP}" ]] && [[ "${current_ip}" == "${VPN_IP}" ]]; then
+    if [[ -z "${REAL_IPv4}" ]] && [[ "${current_ip}" == "${VPN_IPv4}" ]]; then
         # No baseline to compare; only report changes in IP for visibility
         VPN_IP="${current_ip}"
     fi
