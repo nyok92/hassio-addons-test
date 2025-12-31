@@ -59,7 +59,7 @@ _fetch_public_ipv4() {
     return 1
 }
 
-read_real_ip() {
+read_real_ipv4() {
     local attempt ip
 
     for attempt in {1..6}; do
@@ -165,7 +165,7 @@ if [[ "${vpn_openvpn}" == true && "${vpn_wireguard}" == true ]]; then
     exit 1
 fi
 
-REAL_IP="$(read_real_ip)"
+REAL_IP="$(read_real_ipv4)"
 
 if [[ -n "${REAL_IP}" ]]; then
     bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILEv4}: ${REAL_IP}"
