@@ -63,8 +63,8 @@ read_real_ip() {
     local attempt ip
 
     for attempt in {1..6}; do
-        if [[ -f "${REAL_IP_FILE}" ]]; then
-            ip="$(tr -d '[:space:]' < "${REAL_IP_FILE}")"
+        if [[ -f "${REAL_IP_FILEv4}" ]]; then
+            ip="$(tr -d '[:space:]' < "${REAL_IP_FILEv4}")"
             if [[ -n "${ip}" ]]; then
                 echo "${ip}"
                 return 0
@@ -168,9 +168,9 @@ fi
 REAL_IP="$(read_real_ip)"
 
 if [[ -n "${REAL_IP}" ]]; then
-    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILE}: ${REAL_IP}"
+    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILEv4}: ${REAL_IP}"
 else
-    bashio::log.warning "Real IP file ${REAL_IP_FILE} missing or empty; IP leak detection will be less strict."
+    bashio::log.warning "Real IP file ${REAL_IP_FILEv4} missing or empty; IP leak detection will be less strict."
 fi
 
 bashio::log.info "VPN detected; enabling IP leak protection and periodic monitoring."
