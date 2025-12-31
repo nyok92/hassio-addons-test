@@ -303,8 +303,8 @@ bashio::log.info "VPN external IPv4: ${VPN_IPv4} (${VPN_COUNTRYv4}) & IPv6: ${VP
 
 if bashio::config.true 'wireguard_enabled'; then
   bashio::log.info "Requesting current status from WireGuard Client..."
-  exec wg show > /dev/stdout 2>&1 || true
-#  exit 0
+  exec wg show > /dev/stdout
+  exit 0
 fi
 
 while true; do
@@ -348,7 +348,7 @@ while true; do
     fi
     if bashio::config.true 'wireguard_enabled'; then
       bashio::log.info "Requesting current status from WireGuard Client..."
-      exec wg show > /dev/stdout 2>&1 || true
-    #  exit 0
+      exec wg show > /dev/stdout
+      exit 0
     fi
 done
