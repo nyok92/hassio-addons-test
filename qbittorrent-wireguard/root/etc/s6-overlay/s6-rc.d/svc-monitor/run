@@ -342,4 +342,6 @@ while true; do
         # No baseline to compare; only report changes in IP for visibility
         VPN_IPv6="${current_ipv6}"
     fi
+    bashio::log.info "Requesting current status from WireGuard Client..."
+    exec wg show > /dev/stdout
 done
