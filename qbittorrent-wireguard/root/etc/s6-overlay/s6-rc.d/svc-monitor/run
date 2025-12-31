@@ -300,6 +300,8 @@ fi
 read -r VPN_IPv4 VPN_COUNTRYv4 <<< "${VPN_INFO_OUTv4}"
 read -r VPN_IPv6 VPN_COUNTRYv6 <<< "${VPN_INFO_OUTv6}"
 bashio::log.info "VPN external IPv4: ${VPN_IPv4} (${VPN_COUNTRYv4}) & IPv6: ${VPN_IPv6} (${VPN_COUNTRYv6})"
+bashio::log.info "Requesting current status from WireGuard Client..."
+exec wg show > /dev/stdout
 
 while true; do
     sleep "${VPN_CHECK_INTERVAL}"
