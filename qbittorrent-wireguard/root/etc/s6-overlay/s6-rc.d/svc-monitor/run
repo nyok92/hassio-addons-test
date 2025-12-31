@@ -12,7 +12,7 @@ if bashio::config.true 'wireguard_enabled'; then
   wireguard_enabled=true
 fi
 
-if [[ "${openvpn_enabled}" == true && "${wireguard_enabled}" == true ]]; then
+####### if [[ "${openvpn_enabled}" == true && "${wireguard_enabled}" == true ]]; then
 
 bashio::log.info "*** starting monitor service ***"
 
@@ -209,4 +209,4 @@ while true; do
     fi
 
 done
-fi
+### fi
