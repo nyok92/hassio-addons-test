@@ -298,7 +298,7 @@ if ! VPN_INFO_OUTv6="$(wait_for_vpn_ipv6)"; then
 fi
 
 read -r VPN_IPv4 VPN_COUNTRY <<< "${VPN_INFO_OUTv4}"
-read -r VPN_IPv6 VPN_COUNTRY <<< "${VPN_INFO_OUTv6}"
+read -r VPN_IPv6 <<< "${VPN_INFO_OUTv6}"
 
 bashio::log.info "VPN external IPv4: ${VPN_IPv4} & IPv6: ${VPN_IPv6} (${VPN_COUNTRY})"
 
@@ -316,7 +316,7 @@ while true; do
     fi
 
     read -r current_ipv4 current_country <<< "${current_outv4}"
-    read -r current_ipv6 current_country <<< "${current_outv6}"
+    read -r current_ipv6 <<< "${current_outv6}"
 
     bashio::log.info "Current external IP: ${current_ipv4} ${current_ipv6} (${current_country})"
 
