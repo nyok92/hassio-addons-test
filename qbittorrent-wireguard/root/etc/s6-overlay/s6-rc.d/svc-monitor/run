@@ -319,7 +319,7 @@ while true; do
     read -r current_ipv4 current_countryv4 <<< "${current_outv4}"
     read -r current_ipv6 current_countryv6 <<< "${current_outv6}"
 
-    bashio::log.info "Current external IP: ${current_ipv4} (${current_countryv6}) ${current_ipv6} (${current_countryv6})"
+    bashio::log.info "Current external IP: ${current_ipv4} (${current_countryv4}) ${current_ipv6} (${current_countryv6})"
 
     if [[ -n "${REAL_IPv4}" ]] && [[ "${current_ipv4}" == "${REAL_IPv4}" ]]; then
         bashio::log.error "IP LEAK DETECTED: current external IPv4 ${current_ipv4} matches real IPv4 ${REAL_IPv4}. Stopping add-on."
@@ -342,7 +342,4 @@ while true; do
         # No baseline to compare; only report changes in IP for visibility
         VPN_IPv6="${current_ipv6}"
     fi
-
-    bashio::log.info "Requesting current status from WireGuard Client..."
-    exec wg show > /dev/stdout
 done
