@@ -310,6 +310,12 @@ fi
 while true; do
     sleep "${VPN_CHECK_INTERVAL}"
 
+    if bashio::config.true 'wireguard_enabled'; then
+      bashio::log.info "Requesting current status from WireGuard Client..."
+      exec wg show > /dev/stdout
+      continue
+    fi
+
     if ! current_outv4="$(get_ip_infov4)"; then
         bashio::log.warning "Failed to refresh external IPv4; keeping previous assumptions."
         continue
@@ -345,10 +351,5 @@ while true; do
     if [[ -z "${REAL_IPv6}" ]] && [[ "${current_ipv6}" == "${VPN_IPv6}" ]]; then
         # No baseline to compare; only report changes in IP for visibility
         VPN_IPv6="${current_ipv6}"
-    fi
-    if bashio::config.true 'wireguard_enabled'; then
-      bashio::log.info "Requesting current status from WireGuard Client..."
-      exec wg show > /dev/stdout
-      exit 0
     fi
 done
