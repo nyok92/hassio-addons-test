@@ -19,7 +19,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
 REAL_IP_FILEv4="/currentipv4"
 REAL_IP_FILEv6="/currentipv6"
 VPN_CHECK_INTERVAL="${VPN_CHECK_INTERVAL:-300}"
-VPN_INFO_URL="${VPN_INFO_URL:-https://ipinfo.io}"
+VPN_INFO_URL="${VPN_INFO_URL:-https://ipapi.co/json/}"
 
 # -------------------------------
 # Helpers
