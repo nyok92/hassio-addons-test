@@ -12,8 +12,6 @@ if bashio::config.true 'wireguard_enabled'; then
   wireguard_enabled=true
 fi
 
-####### if [[ "${openvpn_enabled}" == true && "${wireguard_enabled}" == true ]]; then
-
 bashio::log.info "*** starting monitor service ***"
 
 export PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
@@ -59,12 +57,62 @@ _fetch_public_ipv4() {
     return 1
 }
 
+_fetch_public_ipv6() {
+    local resp
+    local url
+    local curl_iface_opts=()
+    local urls=(
+        "https://icanhazip.com"
+        "https://ifconfig.me/ip"
+        "https://api64.ipify.org"
+        "https://ipinfo.io/ip"
+        "ipecho.net/plain"
+    )
+    local shuffled_urls
+
+    if [[ -n "${VPN_INTERFACE:-}" ]]; then
+        curl_iface_opts+=(--interface "${VPN_INTERFACE}")
+    fi
+
+    mapfile -t shuffled_urls < <(printf "%s\n" "${urls[@]}" | shuf)
+
+    for url in "${shuffled_urls[@]}"; do
+        resp=$(curl -6 -fsS --max-time 5 "${curl_iface_opts[@]}" "${url}" 2>/dev/null || true)
+        resp="${resp//[[:space:]]/}"
+
+        if [[ "${resp}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "${resp}" =~ ^[0-9a-fA-F:]+$ ]]; then
+            printf '%s\n' "${resp}"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 read_real_ipv4() {
     local attempt ip
 
     for attempt in {1..6}; do
         if [[ -f "${REAL_IP_FILEv4}" ]]; then
             ip="$(tr -d '[:space:]' < "${REAL_IP_FILEv4}")"
+            if [[ -n "${ip}" ]]; then
+                echo "${ip}"
+                return 0
+            fi
+        fi
+        sleep 5
+    done
+
+    echo ""
+    return 0
+}
+
+read_real_ipv6() {
+    local attempt ip
+
+    for attempt in {1..6}; do
+        if [[ -f "${REAL_IP_FILEv6}" ]]; then
+            ip="$(tr -d '[:space:]' < "${REAL_IP_FILEv6}")"
             if [[ -n "${ip}" ]]; then
                 echo "${ip}"
                 return 0
@@ -95,7 +143,7 @@ get_ip_infov4() {
             url="${info_url%/}/${ip}/json"
         fi
 
-        if json="$(curl -fsS --max-time 10 "${url}" 2>/dev/null || true)" && [[ -n "${json}" ]]; then
+        if json="$(curl -4 -fsS --max-time 10 "${url}" 2>/dev/null || true)" && [[ -n "${json}" ]]; then
             country="$(
                 printf '%s\n' "${json}" \
                     | sed -n 's/.*"country"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
@@ -108,7 +156,38 @@ get_ip_infov4() {
     printf '%s %s\n' "${ip}" "${country}"
 }
 
-wait_for_vpn_ip() {
+get_ip_infov6() {
+    local ip country json info_url url
+
+    if ! ip="$(_fetch_public_ipv6)"; then
+        bashio::log.warning "Unable to determine external IP from fallback IP services."
+        return 1
+    fi
+
+    country="Unknown"
+    info_url="${VPN_INFO_URL:-}"
+
+    if [[ -n "${info_url}" ]]; then
+        if [[ "${info_url}" == *"%s"* ]]; then
+            printf -v url "${info_url}" "${ip}"
+        else
+            url="${info_url%/}/${ip}/json"
+        fi
+
+        if json="$(curl -6 -fsS --max-time 10 "${url}" 2>/dev/null || true)" && [[ -n "${json}" ]]; then
+            country="$(
+                printf '%s\n' "${json}" \
+                    | sed -n 's/.*"country"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+                    | head -n1
+            )"
+            [[ -z "${country}" ]] && country="Unknown"
+        fi
+    fi
+
+    printf '%s %s\n' "${ip}" "${country}"
+}
+
+wait_for_vpn_ipv4() {
     local attempt out ip country
 
     for attempt in {1..5}; do
@@ -116,6 +195,30 @@ wait_for_vpn_ip() {
             read -r ip country <<< "${out}"
 
             if [[ -n "${REAL_IPv4:-}" ]] && [[ "${ip}" == "${REAL_IPv4}" ]]; then
+                bashio::log.warning \
+                    "External IP still equals real IP (${ip}); VPN not ready yet (attempt ${attempt}/5)."
+            else
+                printf '%s %s\n' "${ip}" "${country}"
+                return 0
+            fi
+        else
+            bashio::log.warning "Unable to query external IP (attempt ${attempt}/5)."
+        fi
+
+        sleep 5
+    done
+
+    return 1
+}
+
+wait_for_vpn_ipv6() {
+    local attempt out ip country
+
+    for attempt in {1..5}; do
+        if out="$(get_ip_infov6)"; then
+            read -r ip country <<< "${out}"
+
+            if [[ -n "${REAL_IPv6:-}" ]] && [[ "${ip}" == "${REAL_IPv6}" ]]; then
                 bashio::log.warning \
                     "External IP still equals real IP (${ip}); VPN not ready yet (attempt ${attempt}/5)."
             else
@@ -175,38 +278,61 @@ fi
 
 bashio::log.info "VPN detected; enabling IP leak protection and periodic monitoring."
 
-if ! VPN_INFO_OUT="$(wait_for_vpn_ip)"; then
-    bashio::log.error "Unable to obtain a VPN external IP different from real IP. Stopping add-on."
+if ! VPN_INFO_OUTv4="$(wait_for_vpn_ipv4)"; then
+    bashio::log.error "Unable to obtain a VPN external IPv4 different from real IP. Stopping add-on."
     bashio::addon.stop
     exit 1
 fi
 
-read -r VPN_IP VPN_COUNTRY <<< "${VPN_INFO_OUT}"
+if ! VPN_INFO_OUTv6="$(wait_for_vpn_ipv6)"; then
+    bashio::log.error "Unable to obtain a VPN external IPv6 different from real IP. Stopping add-on."
+    bashio::addon.stop
+    exit 1
+fi
 
-bashio::log.info "VPN external IP: ${VPN_IP} (${VPN_COUNTRY})"
+read -r VPN_IPv4 VPN_COUNTRY <<< "${VPN_INFO_OUTv4}"
+read -r VPN_IPv6 VPN_COUNTRY <<< "${VPN_INFO_OUTv6}"
+
+bashio::log.info "VPN external IPv4: ${VPN_IPv4} & IPv6: ${VPN_IPv6} (${VPN_COUNTRY})"
 
 while true; do
     sleep "${VPN_CHECK_INTERVAL}"
 
-    if ! current_out="$(get_ip_infov4)"; then
-        bashio::log.warning "Failed to refresh external IP; keeping previous assumptions."
+    if ! current_outv4="$(get_ip_infov4)"; then
+        bashio::log.warning "Failed to refresh external IPv4; keeping previous assumptions."
         continue
     fi
 
-    read -r current_ip current_country <<< "${current_out}"
+    if ! current_outv6="$(get_ip_infov6)"; then
+        bashio::log.warning "Failed to refresh external IPv6; keeping previous assumptions."
+        continue
+    fi
 
-    bashio::log.info "Current external IP: ${current_ip} (${current_country})"
+    read -r current_ipv4 current_country <<< "${current_outv4}"
+    read -r current_ipv6 current_country <<< "${current_outv6}"
 
-    if [[ -n "${REAL_IPv4}" ]] && [[ "${current_ip}" == "${REAL_IPv4}" ]]; then
-        bashio::log.error "IP LEAK DETECTED: current external IP ${current_ip} matches real IP ${REAL_IPv4}. Stopping add-on."
+    bashio::log.info "Current external IP: ${current_ipv4} ${current_ipv6} (${current_country})"
+
+    if [[ -n "${REAL_IPv4}" ]] && [[ "${current_ipv4}" == "${REAL_IPv4}" ]]; then
+        bashio::log.error "IP LEAK DETECTED: current external IPv4 ${current_ipv4} matches real IPv4 ${REAL_IPv4}. Stopping add-on."
         bashio::addon.stop
         exit 1
     fi
 
-    if [[ -z "${REAL_IPv4}" ]] && [[ "${current_ip}" == "${VPN_IPv4}" ]]; then
+    if [[ -z "${REAL_IPv4}" ]] && [[ "${current_ipv4}" == "${VPN_IPv4}" ]]; then
         # No baseline to compare; only report changes in IP for visibility
-        VPN_IP="${current_ip}"
+        VPN_IPv4="${current_ipv4}"
+    fi
+
+    if [[ -n "${REAL_IPv6}" ]] && [[ "${current_ipv6}" == "${REAL_IPv6}" ]]; then
+        bashio::log.error "IP LEAK DETECTED: current external IPv6 ${current_ipv6} matches real IPv6 ${REAL_IPv6}. Stopping add-on."
+        bashio::addon.stop
+        exit 1
+    fi
+
+    if [[ -z "${REAL_IPv6}" ]] && [[ "${current_ipv6}" == "${VPN_IPv6}" ]]; then
+        # No baseline to compare; only report changes in IP for visibility
+        VPN_IPv6="${current_ipv6}"
     fi
 
 done
-### fi
