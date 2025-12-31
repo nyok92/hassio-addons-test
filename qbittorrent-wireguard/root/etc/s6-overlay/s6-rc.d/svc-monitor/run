@@ -269,11 +269,18 @@ if [[ "${vpn_openvpn}" == true && "${vpn_wireguard}" == true ]]; then
 fi
 
 REAL_IPv4="$(read_real_ipv4)"
+REAL_IPv6="$(read_real_ipv6)"
 
 if [[ -n "${REAL_IPv4}" ]]; then
-    bashio::log.info "Real (non-VPN) IP from ${REAL_IP_FILEv4}: ${REAL_IPv4}"
+    bashio::log.info "Real (non-VPN) IPv4 from ${REAL_IP_FILEv4}: ${REAL_IPv4}"
 else
-    bashio::log.warning "Real IP file ${REAL_IP_FILEv4} missing or empty; IP leak detection will be less strict."
+    bashio::log.warning "Real IPv4 file ${REAL_IP_FILEv4} missing or empty; IP leak detection will be less strict."
+fi
+
+if [[ -n "${REAL_IPv6}" ]]; then
+    bashio::log.info "Real (non-VPN) IPv6 from ${REAL_IP_FILEv6}: ${REAL_IPv6}"
+else
+    bashio::log.warning "Real IPv6 file ${REAL_IP_FILEv6} missing or empty; IP leak detection will be less strict."
 fi
 
 bashio::log.info "VPN detected; enabling IP leak protection and periodic monitoring."
