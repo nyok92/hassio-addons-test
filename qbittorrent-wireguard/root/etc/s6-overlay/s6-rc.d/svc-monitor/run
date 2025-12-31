@@ -156,7 +156,7 @@ fi
 
 if [[ "${vpn_openvpn}" != true && "${vpn_wireguard}" != true ]]; then
     bashio::log.info "VPN leak monitor not started because no VPN is enabled."
-    exit 0
+#########################    exit 0
 fi
 
 if [[ "${vpn_openvpn}" == true && "${vpn_wireguard}" == true ]]; then
