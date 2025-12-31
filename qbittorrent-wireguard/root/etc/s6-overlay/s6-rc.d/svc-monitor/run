@@ -77,7 +77,7 @@ read_real_ipv4() {
     return 0
 }
 
-get_ip_info() {
+get_ip_infov4() {
     local ip country json info_url url
 
     if ! ip="$(_fetch_public_ipv4)"; then
@@ -112,7 +112,7 @@ wait_for_vpn_ip() {
     local attempt out ip country
 
     for attempt in {1..5}; do
-        if out="$(get_ip_info)"; then
+        if out="$(get_ip_infov4)"; then
             read -r ip country <<< "${out}"
 
             if [[ -n "${REAL_IPv4:-}" ]] && [[ "${ip}" == "${REAL_IPv4}" ]]; then
@@ -188,7 +188,7 @@ bashio::log.info "VPN external IP: ${VPN_IP} (${VPN_COUNTRY})"
 while true; do
     sleep "${VPN_CHECK_INTERVAL}"
 
-    if ! current_out="$(get_ip_info)"; then
+    if ! current_out="$(get_ip_infov4)"; then
         bashio::log.warning "Failed to refresh external IP; keeping previous assumptions."
         continue
     fi
